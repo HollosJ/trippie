@@ -8,23 +8,22 @@ const Trips = () => {
 
   useEffect(() => {
     const fetchTrips = async () => {
+      // Get current user
+      const {
+        data: { user },
+      } = await supabaseClient.auth.getUser();
+
       const { data, error } = await supabaseClient
-        .from('user_trips')
-        .select('trip_id, user_id');
+        .from('trips')
+        .select('*')
+        .eq('user_id', user.id);
 
-      if (error) console.error('error', error);
-      else {
-        const tripIds = data.map((trip) => trip.trip_id);
-
-        const { data: tripsData, error: tripsError } = await supabaseClient
-          .from('trips')
-          .select('*')
-          .in('id', tripIds);
-
-        if (tripsError) console.error('error', tripsError);
-        else setTrips(tripsData);
+      if (error) {
+        console.error('Error fetching trips:', error.message);
+        return;
       }
 
+      setTrips(data);
       setLoading(false);
     };
     fetchTrips();
