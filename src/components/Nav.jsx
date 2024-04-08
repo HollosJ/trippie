@@ -20,14 +20,10 @@ const Nav = ({ session }) => {
     <nav className="relative z-50 bg-white shadow">
       <div className="container flex items-center justify-between py-2">
         <a
-          className="text-xl font-bold md:text-3xl whitespace-nowrap"
+          className="text-xl font-bold text-transparent md:text-3xl whitespace-nowrap bg-clip-text gradient--green"
           href={session ? '/trips' : '/'}
         >
-          My{' '}
-          <span className="text-transparent bg-clip-text gradient--green">
-            Next
-          </span>{' '}
-          Trip
+          Trippie
         </a>
 
         {/* Buttons */}
