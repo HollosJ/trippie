@@ -108,6 +108,11 @@ const Trip = () => {
 
     // Fetch trip details
     const fetchTrip = async () => {
+      // Get current user
+      const {
+        data: { user },
+      } = await supabaseClient.auth.getUser();
+
       const { data: trip, error } = await supabaseClient
         .from('trips')
         .select('*')
@@ -115,7 +120,23 @@ const Trip = () => {
         .single();
 
       if (error) {
-        setError(error.message);
+        setError(
+          'An error occurred while fetching the trip. The trip may no longer exist.'
+        );
+        setLoading(false);
+        return;
+      }
+
+      // Check if the current user matches the trip in the user_trips relational database
+      const { data: userTrip } = await supabaseClient
+        .from('user_trips')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('trip_id', tripId)
+        .single();
+
+      if (!userTrip) {
+        setError('You do not have permission to view this trip.');
         setLoading(false);
         return;
       }
