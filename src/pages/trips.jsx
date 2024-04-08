@@ -13,8 +13,8 @@ const Trips = () => {
         data: { user },
       } = await supabaseClient.auth.getUser();
 
-      const { data, error } = await supabaseClient
-        .from('trips')
+      const { data: userTrips, error } = await supabaseClient
+        .from('user_trips')
         .select('*')
         .eq('user_id', user.id);
 
@@ -23,7 +23,19 @@ const Trips = () => {
         return;
       }
 
-      setTrips(data);
+      const tripIds = userTrips.map((trip) => trip.trip_id);
+
+      const { data: trips, error: tripsError } = await supabaseClient
+        .from('trips')
+        .select('*')
+        .in('id', tripIds);
+
+      if (tripsError) {
+        console.error('Error fetching trips:', tripsError.message);
+        return;
+      }
+
+      setTrips(trips);
       setLoading(false);
     };
     fetchTrips();
