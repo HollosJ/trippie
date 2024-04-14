@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import supabaseClient from './utils/supabase/supabaseClient.js';
+import { Toaster, toast } from 'sonner';
 
 import Home from './pages/home.jsx';
 import Trips from './pages/trips.jsx';
@@ -70,11 +71,15 @@ const App = () => {
   ]);
 
   return (
-    <div className="flex flex-col min-h-screen overflow-x-hidden">
-      <Nav session={session} />
+    <>
+      <Toaster position="bottom-center" richColors />
 
-      <RouterProvider router={router} />
-    </div>
+      <div className="flex flex-col min-h-screen overflow-x-hidden">
+        <Nav session={session} />
+
+        <RouterProvider router={router} />
+      </div>
+    </>
   );
 };
 
