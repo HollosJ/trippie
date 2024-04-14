@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import supabaseClient from '../utils/supabase/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
+import supabaseClient from '@/utils/supabase/supabaseClient';
 import TripInfoPanel from '@/components/TripInfoPanel';
 
 const Activity = ({ activity }) => {
