@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import supabaseClient from '../utils/supabase/supabaseClient';
+import supabaseClient from '@/utils/supabase/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'sonner';
 
 const NewTrip = () => {
   const navigate = useNavigate();
@@ -60,10 +61,19 @@ const NewTrip = () => {
       // Reset 'loading' state
       setSubmitting(false);
 
+      // Show success message
+      toast.success(`You're going to ${trip.location}! 🎉`);
+
       // Redirect to home page
       navigate('/trips');
     } catch (error) {
       console.error('Error creating trip:', error.message);
+
+      // Reset 'loading' state
+      setSubmitting(false);
+
+      // Show error message
+      toast.error(error.message);
     }
   };
 
