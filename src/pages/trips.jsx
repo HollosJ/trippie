@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import supabaseClient from '../utils/supabase/supabaseClient';
-import formatDate from '../utils/helpers/formatDate';
+import { PencilIcon } from '@heroicons/react/24/solid';
+import supabaseClient from '@/utils/supabase/supabaseClient';
+import formatDate from '@/utils/helpers/formatDate';
 
 const Trips = () => {
   const [trips, setTrips] = useState([]);
@@ -45,15 +46,15 @@ const Trips = () => {
     <div className="container grid my-8 md:max-w-screen-md">
       <h1 className="text-2xl md:text-4xl">My Trips</h1>
 
-      <div className="grid gap-4 mt-8 md:grid-cols-3">
-        {loading ? (
-          <>
-            <div className="h-16 skeleton"></div>
-            <div className="h-16 skeleton"></div>
-            <div className="h-16 skeleton"></div>
-          </>
-        ) : (
-          trips.map((trip) => (
+      {loading ? (
+        <div className="grid gap-4 mt-8 md:grid-cols-3">
+          <div className="h-16 skeleton"></div>
+          <div className="h-16 skeleton"></div>
+          <div className="h-16 skeleton"></div>
+        </div>
+      ) : trips.length > 0 ? (
+        <div className="grid gap-4 mt-8 md:grid-cols-3">
+          {trips.map((trip) => (
             <a
               className="p-4 bg-white rounded shadow-md"
               href={`/trips/${trip.id}`}
@@ -63,9 +64,22 @@ const Trips = () => {
 
               <span>{formatDate(trip.start_date)}</span>
             </a>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-8 text-lg text-slate-500">
+          You don't have any trips yet. Create a new trip to get started!
+        </p>
+      )}
+
+      {!loading && (
+        <a
+          className="mt-8 text-white button button--primary bg-gradient-to-tr"
+          href="/trips/new"
+        >
+          Create a new trip <PencilIcon className="w-6 h-6 ml-2" />
+        </a>
+      )}
     </div>
   );
 };
