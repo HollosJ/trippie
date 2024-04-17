@@ -8,24 +8,26 @@ const Trips = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTrips = async () => {
+    (async () => {
       // Get current user
       const {
         data: { user },
       } = await supabaseClient.auth.getUser();
 
-      const { data: userTrips, error } = await supabaseClient
+      // Fetch all trips in which the user ID is present
+      const { data: userTrips, error: userTripsError } = await supabaseClient
         .from('user_trips')
         .select('*')
         .eq('user_id', user.id);
 
-      if (error) {
-        console.error('Error fetching trips:', error.message);
+      if (userTripsError) {
+        console.error('Error fetching user trips:', userTripsError.message);
         return;
       }
-
+      // Extract trip IDs
       const tripIds = userTrips.map((trip) => trip.trip_id);
 
+      // Fetch trips data
       const { data: trips, error: tripsError } = await supabaseClient
         .from('trips')
         .select('*')
@@ -36,11 +38,11 @@ const Trips = () => {
         return;
       }
 
+      // Update state
       setTrips(trips);
       setLoading(false);
-    };
-    fetchTrips();
-  }, []);
+    })();
+  }, []); // Empty dependency array means this effect runs once on mount
 
   return (
     <div className="container grid my-8 md:max-w-screen-md">
