@@ -34,7 +34,7 @@ const NewTrip = () => {
       } = await supabaseClient.auth.getUser();
 
       // Insert new trip
-      const { error } = await supabaseClient
+      const { error: tripsError } = await supabaseClient
         .from('trips')
         .insert({
           id: tripId,
@@ -46,16 +46,18 @@ const NewTrip = () => {
         .single();
 
       // Create relationship between user and trip
-      await supabaseClient.from('user_trips').insert([
-        {
-          user_id: user.id,
-          trip_id: tripId,
-        },
-      ]);
+      const { data: userTrips, error: userTripsError } = await supabaseClient
+        .from('user_trips')
+        .insert([
+          {
+            user_id: user.id,
+            trip_id: tripId,
+          },
+        ])
+        .select();
 
-      if (error) {
-        console.error('Error inserting new trip:', error.message);
-        return;
+      if (tripsError || userTripsError) {
+        throw new Error('An error occurred creating your trip.');
       }
 
       // Reset 'loading' state
@@ -65,7 +67,7 @@ const NewTrip = () => {
       toast.success(`You're going to ${trip.location}! 🎉`);
 
       // Redirect to home page
-      navigate('/trips');
+      navigate(`/trips/${userTrips[0].trip_id}`);
     } catch (error) {
       console.error('Error creating trip:', error.message);
 
