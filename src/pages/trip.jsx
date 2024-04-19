@@ -13,7 +13,7 @@ const Activity = ({ activity }) => {
   );
 };
 
-const DateColumn = ({ trip, activities, index }) => {
+const DayColumn = ({ trip, activities, index }) => {
   // Filter activities for current day
   const tripStartDate = new Date(trip.start_date);
   const tripEndDate = new Date(trip.end_date);
@@ -29,7 +29,7 @@ const DateColumn = ({ trip, activities, index }) => {
   });
 
   return (
-    <div className="inline-grid content-start no-scrollbar gap-4 p-2 text-left min-w-[320px] max-w-[320px] border-r last:border-r-0">
+    <div className="inline-grid content-start no-scrollbar gap-4 p-2 text-left min-w-[320px] max-w-[320px] border-r">
       <h2 className="text-right text-gray-400">{index + 1}</h2>
 
       {dayActivities.length > 0 && (
@@ -50,6 +50,7 @@ const Trip = () => {
   const [error, setError] = useState(null);
   const [days, setDays] = useState(0);
 
+  // Fetch trip and activities based on trip ID from URL
   useEffect(() => {
     // Get trip ID from router params
     const tripId = window.location.pathname.split('/').pop();
@@ -154,18 +155,18 @@ const Trip = () => {
 
       {!error && (
         <div className="grid content-start grid-rows-[min-content,1fr] md:grid-rows-1 md:content-stretch md:grid-cols-[min-content,1fr]">
-            <TripInfoPanel
-              trip={trip}
-              loading={loading}
-              deleteTrip={deleteTrip}
-            />
+          <TripInfoPanel
+            trip={trip}
+            loading={loading}
+            deleteTrip={deleteTrip}
+          />
 
           <main className="relative flex h-full overflow-x-auto shadow-inner whitespace-nowrap no-scrollbar">
             <div className="fixed z-10 w-4 h-full bg-gradient-to-r from-slate-50 to-transparent"></div>
 
             {days > 0 &&
               [...Array(days)].map((_, index) => (
-                <DateColumn
+                <DayColumn
                   key={uuidv4()}
                   trip={trip}
                   activities={activities}
