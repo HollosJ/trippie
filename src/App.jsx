@@ -63,7 +63,7 @@ const App = () => {
         <Auth
           supabaseClient={supabaseClient}
           providers={['google']}
-          redirectTo="/trips"
+          redirectTo={`${window.location.origin}/trips`}
           onlyThirdPartyProviders={true}
         />
       ),
