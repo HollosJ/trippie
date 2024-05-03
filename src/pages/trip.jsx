@@ -53,8 +53,8 @@ const DayColumn = ({
         <div className="grid h-full gap-4">
           {dayActivities.map((activity) => (
             <Activity
-              activity={activity}
               key={activity.id}
+              activity={activity}
               setActivityEditing={setActivityEditing}
               setModalOpen={setModalOpen}
             />
@@ -198,17 +198,18 @@ const Trip = () => {
       return;
     }
 
+    const newActivity = {
+      id: uuidv4(),
+      title: activityEditing.title,
+      location: activityEditing.location,
+      date: activityEditing.date,
+      notes: activityEditing.notes,
+      trip_id: trip.id,
+    };
+
     const { error } = await supabaseClient
       .from('activities')
-      .insert([
-        {
-          title: activityEditing.title,
-          location: activityEditing.location,
-          date: activityEditing.date,
-          notes: activityEditing.notes,
-          trip_id: trip.id,
-        },
-      ])
+      .insert(newActivity)
       .single();
 
     if (error) {
@@ -219,7 +220,7 @@ const Trip = () => {
       return;
     }
 
-    setActivities([...activities, activityEditing]);
+    setActivities([...activities, newActivity]);
     setModalOpen(false);
     toast.success('🎉 Activity added');
   };
