@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 const Activity = ({ activity, setActivityEditing, setModalOpen }) => {
   return (
     <button
-      className="p-2 text-black whitespace-normal transition-all bg-white rounded shadow-md hover:shadow-lg"
+      className="p-2 text-left text-black whitespace-normal transition-all bg-white rounded shadow-md hover:shadow-lg"
       onClick={() => {
         setActivityEditing(activity);
         setModalOpen(true);
@@ -18,6 +18,10 @@ const Activity = ({ activity, setActivityEditing, setModalOpen }) => {
       <h3 className="text-lg font-bold">{activity.title}</h3>
 
       {activity.location && <span>{activity.location}</span>}
+
+      {activity.notes && (
+        <p className="text-sm text-gray-500">"{activity.notes}"</p>
+      )}
     </button>
   );
 };
@@ -31,7 +35,6 @@ const DayColumn = ({
 }) => {
   // Filter activities for current day
   const tripStartDate = new Date(trip.start_date);
-  const tripEndDate = new Date(trip.end_date);
   const currentDay = new Date(
     tripStartDate.setDate(tripStartDate.getDate() + index)
   )
