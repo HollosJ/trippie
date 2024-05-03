@@ -1,13 +1,13 @@
 import React from 'react';
 
-const Modal = ({ isOpen, setIsOpen, children }) => {
+const Modal = ({ trigger, setTrigger, children }) => {
   return (
     <>
-      {isOpen && (
+      {trigger && (
         <div className="fixed inset-0 z-50">
           <button
             className="absolute inset-0 bg-black opacity-50 backdrop-blur-sm"
-            onClick={() => setIsOpen(false)}
+            onClick={() => setTrigger(false)}
           ></button>
 
           <div className="container flex items-center justify-center h-full">
