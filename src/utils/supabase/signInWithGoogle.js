@@ -4,6 +4,9 @@ const signInWithGoogle = async () => {
   try {
     const { user, session, error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/trips`,
+      },
     });
 
     if (error) {
