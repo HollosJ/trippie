@@ -14,7 +14,9 @@ const Home = () => {
 
         {/* CTA */}
         <div className="grid">
-          <button className="button button--primary">Get Started</button>
+          <a href="/trips" className="button button--primary">
+            Get Started
+          </a>
 
           <p className="mt-2 text-gray-600">
             Already have an account?{' '}
