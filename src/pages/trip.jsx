@@ -305,7 +305,9 @@ const Trip = () => {
       {!error && (
         <Modal trigger={modalOpen} setTrigger={setModalOpen}>
           <form onSubmit={handleActivityFormSubmit} className="grid gap-8">
-            <h2 className="text-2xl font-bold">Add Activity</h2>
+            <h2 className="text-2xl font-bold">
+              {activityEditing.id ? 'Edit' : 'Add'} Activity
+            </h2>
 
             <div className="grid">
               <label htmlFor="title">Title</label>
