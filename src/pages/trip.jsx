@@ -350,6 +350,8 @@ const Trip = () => {
                     date: e.target.value,
                   })
                 }
+                min={trip.start_date}
+                max={trip.end_date}
                 required
               />
             </div>
