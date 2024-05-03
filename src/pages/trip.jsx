@@ -1,32 +1,46 @@
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { PlusCircleIcon } from '@heroicons/react/16/solid';
 import supabaseClient from '@/utils/supabase/supabaseClient';
 import TripInfoPanel from '@/components/TripInfoPanel';
+import Modal from '@/components/Modal';
+import { toast } from 'sonner';
 
-const Activity = ({ activity }) => {
+const Activity = ({ activity, setActivityEditing, setModalOpen }) => {
   return (
-    <div className="p-2 text-black whitespace-normal bg-white rounded shadow-md">
+    <button
+      className="p-2 text-black whitespace-normal transition-all bg-white rounded shadow-md hover:shadow-lg"
+      onClick={() => {
+        setActivityEditing(activity);
+        setModalOpen(true);
+      }}
+    >
       <h3 className="text-lg font-bold">{activity.title}</h3>
 
       {activity.location && <span>{activity.location}</span>}
-    </div>
+    </button>
   );
 };
 
-const DayColumn = ({ trip, activities, index }) => {
+const DayColumn = ({
+  trip,
+  activities,
+  index,
+  setModalOpen,
+  setActivityEditing,
+}) => {
   // Filter activities for current day
   const tripStartDate = new Date(trip.start_date);
   const tripEndDate = new Date(trip.end_date);
+  const currentDay = new Date(
+    tripStartDate.setDate(tripStartDate.getDate() + index)
+  )
+    .toISOString()
+    .split('T')[0];
 
-  const dayActivities = activities.filter((activity) => {
-    const activityDate = new Date(activity.date);
-
-    return (
-      activityDate.getDate() === tripStartDate.getDate() + index &&
-      activityDate >= tripStartDate &&
-      activityDate <= tripEndDate
-    );
-  });
+  const dayActivities = activities.filter(
+    (activity) => activity?.date === currentDay
+  );
 
   return (
     <div className="inline-grid content-start no-scrollbar gap-4 p-2 text-left min-w-[320px] max-w-[320px] border-r">
@@ -35,10 +49,31 @@ const DayColumn = ({ trip, activities, index }) => {
       {dayActivities.length > 0 && (
         <div className="grid h-full gap-4">
           {dayActivities.map((activity) => (
-            <Activity activity={activity} key={activity.id} />
+            <Activity
+              activity={activity}
+              key={activity.id}
+              setActivityEditing={setActivityEditing}
+              setModalOpen={setModalOpen}
+            />
           ))}
         </div>
       )}
+
+      <button
+        className="button button--secondary"
+        onClick={() => {
+          setActivityEditing({
+            title: '',
+            location: '',
+            date: currentDay,
+            notes: '',
+          });
+
+          setModalOpen(true);
+        }}
+      >
+        <PlusCircleIcon className="w-6 h-6 text-slate-300" />
+      </button>
     </div>
   );
 };
@@ -49,6 +84,13 @@ const Trip = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [days, setDays] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [activityEditing, setActivityEditing] = useState({
+    title: '',
+    location: '',
+    date: '',
+    notes: '',
+  });
 
   // Fetch trip and activities based on trip ID from URL
   useEffect(() => {
@@ -102,7 +144,7 @@ const Trip = () => {
       setLoading(false);
     };
 
-    // Fetch activities
+    // Fetch activities for the trip
     const fetchActivities = async () => {
       const { data: activities, error } = await supabaseClient
         .from('activities')
@@ -145,6 +187,82 @@ const Trip = () => {
     window.location.href = '/trips';
   };
 
+  const handleActivityFormSubmit = async (e) => {
+    e.preventDefault();
+
+    if (activityEditing.id) {
+      editExistingActivity();
+      return;
+    }
+
+    const { error } = await supabaseClient
+      .from('activities')
+      .insert([
+        {
+          title: activityEditing.title,
+          location: activityEditing.location,
+          date: activityEditing.date,
+          notes: activityEditing.notes,
+          trip_id: trip.id,
+        },
+      ])
+      .single();
+
+    if (error) {
+      setError('An error occurred while adding the activity.' + error.message);
+      toast.error(
+        'An error occurred while adding the activity.' + error.message
+      );
+      return;
+    }
+
+    setActivities([...activities, activityEditing]);
+    setModalOpen(false);
+    toast.success('🎉 Activity added');
+  };
+
+  const editExistingActivity = async () => {
+    const { error } = await supabaseClient
+      .from('activities')
+      .update({
+        title: activityEditing.title,
+        location: activityEditing.location,
+        date: activityEditing.date,
+        notes: activityEditing.notes,
+      })
+      .eq('id', activityEditing.id);
+
+    if (error) {
+      setError('An error occurred while updating the activity.');
+      return;
+    }
+
+    setActivities(
+      activities.map((activity) =>
+        activity.id === activityEditing.id ? activityEditing : activity
+      )
+    );
+
+    toast.success('🔄 Activity updated');
+    setModalOpen(false);
+  };
+
+  const deleteActivity = async (activityId) => {
+    const { error } = await supabaseClient
+      .from('activities')
+      .delete()
+      .eq('id', activityId);
+
+    if (error) {
+      setError('An error occurred while deleting the activity.');
+      return;
+    }
+
+    setActivities(activities.filter((activity) => activity.id !== activityId));
+    toast.success('🗑️ Activity deleted');
+    setModalOpen(false);
+  };
+
   return (
     <div className="grid flex-auto h-full">
       {error && (
@@ -171,10 +289,106 @@ const Trip = () => {
                   trip={trip}
                   activities={activities}
                   index={index}
+                  setModalOpen={setModalOpen}
+                  activityEditing={activityEditing}
+                  setActivityEditing={setActivityEditing}
                 />
               ))}
           </main>
         </div>
+      )}
+
+      {!error && (
+        <Modal trigger={modalOpen} setTrigger={setModalOpen}>
+          <form onSubmit={handleActivityFormSubmit} className="grid gap-8">
+            <h2 className="text-2xl font-bold">Add Activity</h2>
+
+            <div className="grid">
+              <label htmlFor="title">Title</label>
+              <input
+                className="input"
+                type="text"
+                id="title"
+                value={activityEditing.title}
+                onChange={(e) =>
+                  setActivityEditing({
+                    ...activityEditing,
+                    title: e.target.value,
+                  })
+                }
+                required
+              />
+            </div>
+
+            <div className="grid">
+              <label htmlFor="location">Location</label>
+              <input
+                className="input"
+                type="text"
+                id="location"
+                value={activityEditing.location}
+                onChange={(e) =>
+                  setActivityEditing({
+                    ...activityEditing,
+                    location: e.target.value,
+                  })
+                }
+                required
+              />
+            </div>
+
+            <div className="grid">
+              <label htmlFor="date">Date</label>
+              <input
+                className="input"
+                type="date"
+                id="date"
+                value={activityEditing.date}
+                onChange={(e) =>
+                  setActivityEditing({
+                    ...activityEditing,
+                    date: e.target.value,
+                  })
+                }
+                required
+              />
+            </div>
+
+            <div className="grid">
+              <label htmlFor="notes">Notes</label>
+              <textarea
+                className="input"
+                id="notes"
+                value={activityEditing.notes}
+                onChange={(e) =>
+                  setActivityEditing({
+                    ...activityEditing,
+                    notes: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="flex justify-end gap-2">
+              {/* Delete button */}
+              {activityEditing.id && (
+                <button
+                  type="button"
+                  className="button button--danger"
+                  onClick={() => {
+                    deleteActivity(activityEditing.id);
+                  }}
+                >
+                  Delete
+                </button>
+              )}
+
+              <button type="submit" className="button button--primary">
+                Save
+              </button>
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );
