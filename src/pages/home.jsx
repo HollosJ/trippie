@@ -1,4 +1,5 @@
 import HeroImage from '@/assets/hero-image.svg';
+import signInWithGoogle from '../utils/supabase/signInWithGoogle';
 
 const Home = () => {
   return (
@@ -14,16 +15,12 @@ const Home = () => {
 
         {/* CTA */}
         <div className="grid">
-          <a href="/trips" className="button button--primary">
-            Get Started
-          </a>
-
-          <p className="mt-2 text-gray-600">
-            Already have an account?{' '}
-            <a href="/login" className="font-semibold text-green-600">
-              Login
-            </a>
-          </p>
+          <button
+            className="button button--primary"
+            onClick={signInWithGoogle()}
+          >
+            Log in
+          </button>
         </div>
       </div>
 
