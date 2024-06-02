@@ -15,10 +15,7 @@ const Home = () => {
 
         {/* CTA */}
         <div className="grid">
-          <button
-            className="button button--primary"
-            onClick={signInWithGoogle()}
-          >
+          <button className="button button--primary" onClick={signInWithGoogle}>
             Log in
           </button>
         </div>
