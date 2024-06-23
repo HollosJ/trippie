@@ -42,7 +42,7 @@ h6 {
 }
 
 .button--primary {
-  @apply text-white bg-black border-black;
+  @apply text-white bg-slate-900 border-slate-900;
 }
 
 .button--danger {
@@ -67,5 +67,5 @@ h6 {
 }
 
 ::-webkit-scrollbar-track {
-  @apply border-2 border-black bg-slate-100;
+  @apply border-2 border-slate-900 bg-slate-100;
 }

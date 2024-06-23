@@ -18,7 +18,7 @@ const Nav = ({ session }) => {
 
   return (
     <nav className="relative z-50 bg-white shadow-sm">
-      <div className="container flex items-center justify-between py-2">
+      <div className="flex items-center justify-between px-4 py-2">
         <a
           className="text-xl font-bold text-transparent md:text-3xl whitespace-nowrap bg-clip-text gradient--green"
           href={session ? '/trips' : '/'}

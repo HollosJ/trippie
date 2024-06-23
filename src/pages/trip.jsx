@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 const Activity = ({ activity, setActivityEditing, setModalOpen }) => {
   return (
     <button
-      className="p-2 text-left text-black whitespace-normal transition-all bg-white border rounded shadow-sm hover:shadow-md"
+      className="p-2 text-left whitespace-normal transition-all bg-white border rounded shadow-sm text-slate-900 hover:shadow-md"
       onClick={() => {
         setActivityEditing(activity);
         setModalOpen(true);
