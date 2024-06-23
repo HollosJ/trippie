@@ -58,7 +58,7 @@ const Trips = () => {
         <div className="grid gap-4 mt-8 md:grid-cols-3">
           {trips.map((trip) => (
             <a
-              className="p-4 bg-white rounded shadow-md"
+              className="p-4 transition bg-white border rounded shadow-sm hover:shadow-md"
               href={`/trips/${trip.id}`}
               key={trip.id}
             >

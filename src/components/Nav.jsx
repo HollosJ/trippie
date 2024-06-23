@@ -17,7 +17,7 @@ const Nav = ({ session }) => {
   }
 
   return (
-    <nav className="relative z-50 bg-white shadow">
+    <nav className="relative z-50 bg-white shadow-sm">
       <div className="container flex items-center justify-between py-2">
         <a
           className="text-xl font-bold text-transparent md:text-3xl whitespace-nowrap bg-clip-text gradient--green"
@@ -50,7 +50,7 @@ const Nav = ({ session }) => {
         <button
           className={`absolute left-0 w-screen h-screen top-0 transition ${
             menuOpen
-              ? 'bg-slate-900/25 backdrop-blur-[3px]'
+              ? 'bg-slate-900/25 backdrop-blur-sm'
               : 'pointer-events-none'
           }`}
           onClick={closeMenu}

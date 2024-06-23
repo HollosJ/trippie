@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 const Activity = ({ activity, setActivityEditing, setModalOpen }) => {
   return (
     <button
-      className="p-2 text-left text-black whitespace-normal transition-all bg-white rounded shadow-md hover:shadow-lg"
+      className="p-2 text-left text-black whitespace-normal transition-all bg-white border rounded shadow-sm hover:shadow-md"
       onClick={() => {
         setActivityEditing(activity);
         setModalOpen(true);
@@ -302,6 +302,7 @@ const Trip = () => {
         </div>
       )}
 
+      {/* Activity create/edit modal */}
       {!error && (
         <Modal trigger={modalOpen} setTrigger={setModalOpen}>
           <form onSubmit={handleActivityFormSubmit} className="grid gap-8">

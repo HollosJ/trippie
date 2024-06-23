@@ -83,7 +83,7 @@ const NewTrip = () => {
     <div className="container my-8 md:max-w-screen-md">
       <form
         onSubmit={createTrip}
-        className="grid gap-8 p-4 bg-white rounded shadow-md"
+        className="grid gap-8 p-4 bg-white rounded shadow-sm"
       >
         <h1 className="text-4xl">Create Trip</h1>
 

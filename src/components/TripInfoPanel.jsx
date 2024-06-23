@@ -1,4 +1,4 @@
-import { ArrowUturnLeftIcon, ClockIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon, ClockIcon } from '@heroicons/react/24/solid';
 import { toast } from 'sonner';
 
 const TripInfoPanel = ({ trip, loading, deleteTrip }) => {
@@ -11,15 +11,7 @@ const TripInfoPanel = ({ trip, loading, deleteTrip }) => {
     <aside className="grid content-between gap-4 p-4 text-white bg-slate-950 md:w-64">
       {/* Top portion */}
       <div className="grid gap-4">
-        <a
-          className="flex gap-2 underline transition hover:opacity-75"
-          href="/trips"
-        >
-          <ArrowUturnLeftIcon className="w-6 h-6" />
-          Trips
-        </a>
-
-        <div className="grid gap-2 overflow-hidden">
+        <div className="grid overflow-hidden">
           <span>Your trip to</span>
 
           <h1>
@@ -38,7 +30,7 @@ const TripInfoPanel = ({ trip, loading, deleteTrip }) => {
         {/* Days till */}
         {daysTill > 0 && !loading && (
           <div className="flex items-center gap-2 p-2 rounded justify-self-start md:justify-self-stretch gradient--green">
-            <ClockIcon className="w-6 h-6" /> Only {daysTill} days away!
+            <ClockIcon className="w-6 h-6" /> {daysTill} days away!
           </div>
         )}
       </div>

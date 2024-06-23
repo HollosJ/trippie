@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  *,
+  ::before,
+  ::after {
+    @apply border-neutral-200;
+  }
+}
+
 body {
   font-family: 'Bricolage Grotesque', sans-serif;
 }
@@ -20,7 +28,7 @@ h6 {
 }
 
 .input {
-  @apply p-2 border-2 rounded;
+  @apply p-2 border rounded;
 }
 
 .skeleton {
@@ -28,7 +36,7 @@ h6 {
 }
 
 .button {
-  @apply flex justify-center px-4 py-2 text-center transition border-2 rounded;
+  @apply flex justify-center px-4 py-2 text-center transition border rounded;
 
   @apply hover:brightness-90;
 }
