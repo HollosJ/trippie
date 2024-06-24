@@ -1,7 +1,7 @@
 import HeroImage from '@/assets/hero-image.svg';
 import signInWithGoogle from '../utils/supabase/signInWithGoogle';
 
-const Home = () => {
+const HomePage = () => {
   return (
     <div className="container grid items-center gap-8 py-8 md:grid-cols-2 md:max-w-screen-lg">
       <div className="grid gap-8 justify-items-start">
@@ -29,4 +29,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;

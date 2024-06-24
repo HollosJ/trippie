@@ -3,7 +3,7 @@ import { PencilIcon } from '@heroicons/react/24/solid';
 import supabaseClient from '@/utils/supabase/supabaseClient';
 import formatDate from '@/utils/helpers/formatDate';
 
-const Trips = () => {
+const TripsPage = () => {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -86,4 +86,4 @@ const Trips = () => {
   );
 };
 
-export default Trips;
+export default TripsPage;

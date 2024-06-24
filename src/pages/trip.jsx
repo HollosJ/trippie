@@ -1,87 +1,12 @@
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { PlusCircleIcon } from '@heroicons/react/16/solid';
 import supabaseClient from '@/utils/supabase/supabaseClient';
 import TripInfoPanel from '@/components/TripInfoPanel';
 import Modal from '@/components/Modal';
 import { toast } from 'sonner';
+import DayColumn from '../components/DayColumn';
 
-const Activity = ({ activity, setActivityEditing, setModalOpen }) => {
-  return (
-    <button
-      className="p-2 text-left whitespace-normal transition-all bg-white border rounded shadow-sm text-slate-900 hover:shadow-md"
-      onClick={() => {
-        setActivityEditing(activity);
-        setModalOpen(true);
-      }}
-    >
-      <h3 className="text-lg font-bold">{activity.title}</h3>
-
-      {activity.location && <span>{activity.location}</span>}
-
-      {activity.notes && (
-        <p className="text-sm text-gray-500">"{activity.notes}"</p>
-      )}
-    </button>
-  );
-};
-
-const DayColumn = ({
-  trip,
-  activities,
-  index,
-  setModalOpen,
-  setActivityEditing,
-}) => {
-  // Filter activities for current day
-  const tripStartDate = new Date(trip.start_date);
-  const currentDay = new Date(
-    tripStartDate.setDate(tripStartDate.getDate() + index)
-  )
-    .toISOString()
-    .split('T')[0];
-
-  const dayActivities = activities.filter(
-    (activity) => activity?.date === currentDay
-  );
-
-  return (
-    <div className="inline-grid content-start no-scrollbar gap-4 p-2 text-left min-w-[320px] max-w-[320px] border-r">
-      <h2 className="text-right text-gray-400">{index + 1}</h2>
-
-      {dayActivities.length > 0 && (
-        <div className="grid h-full gap-4">
-          {dayActivities.map((activity) => (
-            <Activity
-              key={activity.id}
-              activity={activity}
-              setActivityEditing={setActivityEditing}
-              setModalOpen={setModalOpen}
-            />
-          ))}
-        </div>
-      )}
-
-      <button
-        className="button button--secondary"
-        onClick={() => {
-          setActivityEditing({
-            title: '',
-            location: '',
-            date: currentDay,
-            notes: '',
-          });
-
-          setModalOpen(true);
-        }}
-      >
-        <PlusCircleIcon className="w-6 h-6 text-slate-300" />
-      </button>
-    </div>
-  );
-};
-
-const Trip = () => {
+const TripPage = () => {
   const [trip, setTrip] = useState({});
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -403,4 +328,4 @@ const Trip = () => {
   );
 };
 
-export default Trip;
+export default TripPage;

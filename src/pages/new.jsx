@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
 
-const NewTrip = () => {
+const NewTripPage = () => {
   const navigate = useNavigate();
 
   const [submitting, setSubmitting] = useState(false);
@@ -162,4 +162,4 @@ const NewTrip = () => {
   );
 };
 
-export default NewTrip;
+export default NewTripPage;
