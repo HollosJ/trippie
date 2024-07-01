@@ -8,9 +8,9 @@ const TripInfoPanel = ({ trip, loading, deleteTrip }) => {
   const daysTill = Math.floor((tripStart - date) / (1000 * 60 * 60 * 24));
 
   return (
-    <aside className="grid content-between gap-4 p-4 text-white bg-slate-900 md:w-64">
+    <aside className="flex flex-wrap content-between justify-between gap-4 p-4 text-white md:grid bg-slate-950 md:w-64">
       {/* Top portion */}
-      <div className="grid gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 md:grid">
         <div className="grid overflow-hidden">
           <span>Your trip to</span>
 
