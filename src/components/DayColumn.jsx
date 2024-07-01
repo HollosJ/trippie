@@ -23,7 +23,13 @@ const DayColumn = ({
 
   return (
     <div className="inline-grid content-start no-scrollbar gap-4 p-2 text-left min-w-[320px] max-w-[320px] border-r">
-      <h2 className="text-right text-gray-400">{index + 1}</h2>
+      <h2 className="text-xs font-normal text-right text-slate-500">
+        {new Date(currentDay).toLocaleDateString('en-US', {
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric',
+        })}
+      </h2>
 
       {dayActivities.length > 0 && (
         <div className="grid h-full gap-4">
