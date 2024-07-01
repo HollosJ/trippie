@@ -1,7 +1,7 @@
 import HeroImage from '@/assets/hero-image.svg';
 import signInWithGoogle from '../utils/supabase/signInWithGoogle';
 
-const HomePage = () => {
+const HomePage = ({ session }) => {
   return (
     <div className="container grid items-center gap-8 py-8 md:grid-cols-2 md:max-w-screen-lg">
       <div className="grid gap-8 justify-items-start">
@@ -13,12 +13,25 @@ const HomePage = () => {
           Travel Planning Companion!
         </h1>
 
-        {/* CTA */}
-        <div className="grid">
-          <button className="button button--primary" onClick={signInWithGoogle}>
-            Log in
-          </button>
-        </div>
+        {session ? (
+          <div className="grid gap-2 text-lg">
+            You are signed in!
+            <a href="/trips" className="button button--primary">
+              My trips 🌍
+            </a>
+          </div>
+        ) : (
+          <div className="text-lg">
+            <button
+              className="button button--primary"
+              onClick={() => {
+                signInWithGoogle();
+              }}
+            >
+              Sign in to get started 🚀
+            </button>
+          </div>
+        )}
       </div>
 
       <img

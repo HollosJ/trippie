@@ -31,7 +31,7 @@ const App = () => {
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Home />,
+      element: <Home session={session} />,
     },
     {
       path: 'trips',
