@@ -1,0 +1,80 @@
+import prisma from "../config/db.js";
+
+export const fetchTrips = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const trips = await prisma.trip.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    return res.status(200).json(trips);
+  } catch (error) {
+    console.error("Error fetching trips:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const fetchTrip = async (req, res) => {
+  const { tripId } = req.params;
+  const userId = req.userId;
+
+  try {
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const trip = await prisma.trip.findUnique({
+      where: {
+        id: Number(tripId),
+      },
+    });
+    if (!trip) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+
+    return res.status(200).json(trip);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const createTrip = async (req, res) => {
+  const userId = req.userId;
+  const { name, startDate, endDate } = req.body;
+
+  try {
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    if (!name || !startDate || !endDate) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const trip = await prisma.trip.create({
+      data: {
+        name,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+
+    return res.status(201).json({ trip });
+  } catch (error) {
+    console.error("Error creating trip:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

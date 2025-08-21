@@ -1,0 +1,100 @@
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiFetch } from "../utils/api";
+import Form from "./Form";
+import { useNavigate } from "@tanstack/react-router";
+
+interface CreateTripFormProps {
+  className?: string;
+}
+
+const tripSchema = z
+  .object({
+    name: z.string().min(1, "Trip name is required"),
+    startDate: z.string().min(1, "Start date is required"),
+    endDate: z.string().min(1, "End date is required"),
+  })
+  .refine((data) => new Date(data.endDate) >= new Date(data.startDate), {
+    path: ["endDate"],
+    message: "End date cannot be before start date",
+  });
+
+type Trip = z.infer<typeof tripSchema>;
+
+export default function CreateTripForm({ className }: CreateTripFormProps) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (trip: Trip) => {
+      return apiFetch("/trips", {
+        method: "POST",
+        body: JSON.stringify({
+          ...trip,
+          startDate: new Date(trip.startDate),
+          endDate: new Date(trip.endDate),
+        }),
+      });
+    },
+    onSuccess: (data: any /* TODO */) => {
+      queryClient.invalidateQueries({ queryKey: ["trips"] });
+
+      // Take user to their newly created trip
+      navigate({
+        to: `/trips/${data.trip.id}`,
+      });
+    },
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Trip>({
+    resolver: zodResolver(tripSchema),
+    defaultValues: {
+      name: "",
+      startDate: "",
+      endDate: "",
+    },
+  });
+
+  const onSubmit = (data: Trip) => mutation.mutate(data);
+
+  return (
+    <div className="container md:max-w-screen-md my-8 md:my-16">
+      <h1 className="text-5xl">Create Trip</h1>
+
+      <Form
+        onSubmit={handleSubmit(onSubmit)}
+        className={`${className || ""} mt-8 grid gap-8`}
+      >
+        <div className="grid">
+          <label htmlFor="name">Where are you going?</label>
+          <input id="name" {...register("name")} />
+          {errors.name && <span>{errors.name.message}</span>}
+        </div>
+
+        <div className="grid grid-cols-2 gap-8">
+          <div className="grid">
+            <label htmlFor="startDate">From</label>
+            <input id="startDate" type="date" {...register("startDate")} />
+            {errors.startDate && <span>{errors.startDate.message}</span>}
+          </div>
+
+          <div className="grid">
+            <label htmlFor="endDate">End Date</label>
+            <input id="endDate" type="date" {...register("endDate")} />
+            {errors.endDate && <span>{errors.endDate.message}</span>}
+          </div>
+        </div>
+
+        <button type="submit" className="btn btn--primary">
+          {mutation.isPending ? "Submitting..." : "Submit"}
+        </button>
+      </Form>
+    </div>
+  );
+}

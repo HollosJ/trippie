@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* https://tailwindcss.com/docs/theme */
+@theme {
+  /* Your custom theme styles go here (replaces :root) */
+}
+
+/* Add your own default base styles for specific HTML elements, for example: */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold;
+  }
+
+  /* Re-introduce the pointer cursor for all non-disabled buttons */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  input {
+    @apply border rounded p-2;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn--primary {
+    @apply bg-black text-white;
+  }
+
+  .btn--secondary {
+    @apply bg-white text-black border border-black;
+  }
+}
+
+/* Center containers and give them a 1rem padding on either side */
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
