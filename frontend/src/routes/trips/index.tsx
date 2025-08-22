@@ -1,12 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ProtectedRoute } from "../../components/ProtectedRoute";
-import TripsGrid from "../../components/TripsGrid";
-import type { Trip } from "../../types";
-import { apiFetch } from "../../utils/api";
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { ProtectedRoute } from '../../components/ProtectedRoute';
+import TripsGrid from '../../components/TripsGrid';
+import type { Trip } from '../../types';
+import { apiFetch } from '../../utils/api';
 
-export const Route = createFileRoute("/trips/")({
+export const Route = createFileRoute('/trips/')({
   loader: async () => {
-    return apiFetch("/trips") as Promise<Trip[]>;
+    if (!localStorage.getItem('token')) return;
+
+    return apiFetch('/trips') as Promise<Trip[]>;
   },
   component: () => (
     <ProtectedRoute>
@@ -15,7 +17,7 @@ export const Route = createFileRoute("/trips/")({
   ),
 });
 function Trips() {
-  const trips = Route.useLoaderData();
+  const trips = Route.useLoaderData() as Trip[];
 
   return (
     <div className="container my-8 md:my-16">
