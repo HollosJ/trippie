@@ -26,7 +26,7 @@ model Trip {
   name      String
   startDate DateTime
   endDate   DateTime
-  user      User       @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   activites Activity[]
 }
@@ -36,6 +36,6 @@ model Activity {
   name   String
   date   DateTime
   order  Int // Used for ordering within a date
-  trip   Trip     @relation(fields: [tripId], references: [id])
+  trip   Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
   tripId Int
 }
