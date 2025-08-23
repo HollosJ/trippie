@@ -33,6 +33,7 @@ export const fetchTrip = async (req, res) => {
     const trip = await prisma.trip.findUnique({
       where: {
         id: Number(tripId),
+        userId,
       },
     });
     if (!trip) {
@@ -89,12 +90,13 @@ export const deleteTrip = async (req, res) => {
     }
 
     if (!tripId) {
-      return res.status(400).json({ error: 'Missing tripId' });
+      return res.status(400).json({ error: 'Missing trip ID' });
     }
 
     const trip = await prisma.trip.findUnique({
       where: {
         id: Number(tripId),
+        userId,
       },
     });
 
