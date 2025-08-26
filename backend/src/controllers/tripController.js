@@ -12,6 +12,9 @@ export const fetchTrips = async (req, res) => {
       where: {
         userId,
       },
+      orderBy: {
+        startDate: 'asc', // Earliest trips first
+      },
     });
 
     return res.status(200).json(trips);
