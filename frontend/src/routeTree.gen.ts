@@ -11,10 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as CreateTripRouteImport } from './routes/create-trip'
+import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TripsIndexRouteImport } from './routes/trips/index'
-import { Route as TripsTripIdRouteImport } from './routes/trips/$tripId'
+import { Route as AuthTripsIndexRouteImport } from './routes/_auth.trips.index'
+import { Route as AuthTripsNewRouteImport } from './routes/_auth.trips.new'
+import { Route as AuthTripsTripIdRouteImport } from './routes/_auth.trips.$tripId'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -26,9 +27,8 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CreateTripRoute = CreateTripRouteImport.update({
-  id: '/create-trip',
-  path: '/create-trip',
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -36,76 +36,75 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TripsIndexRoute = TripsIndexRouteImport.update({
+const AuthTripsIndexRoute = AuthTripsIndexRouteImport.update({
   id: '/trips/',
   path: '/trips/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthRoute,
 } as any)
-const TripsTripIdRoute = TripsTripIdRouteImport.update({
+const AuthTripsNewRoute = AuthTripsNewRouteImport.update({
+  id: '/trips/new',
+  path: '/trips/new',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthTripsTripIdRoute = AuthTripsTripIdRouteImport.update({
   id: '/trips/$tripId',
   path: '/trips/$tripId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/create-trip': typeof CreateTripRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/trips/$tripId': typeof TripsTripIdRoute
-  '/trips': typeof TripsIndexRoute
+  '/trips/$tripId': typeof AuthTripsTripIdRoute
+  '/trips/new': typeof AuthTripsNewRoute
+  '/trips': typeof AuthTripsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/create-trip': typeof CreateTripRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/trips/$tripId': typeof TripsTripIdRoute
-  '/trips': typeof TripsIndexRoute
+  '/trips/$tripId': typeof AuthTripsTripIdRoute
+  '/trips/new': typeof AuthTripsNewRoute
+  '/trips': typeof AuthTripsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/create-trip': typeof CreateTripRoute
+  '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/trips/$tripId': typeof TripsTripIdRoute
-  '/trips/': typeof TripsIndexRoute
+  '/_auth/trips/$tripId': typeof AuthTripsTripIdRoute
+  '/_auth/trips/new': typeof AuthTripsNewRoute
+  '/_auth/trips/': typeof AuthTripsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/create-trip'
     | '/login'
     | '/register'
     | '/trips/$tripId'
+    | '/trips/new'
     | '/trips'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/create-trip'
-    | '/login'
-    | '/register'
-    | '/trips/$tripId'
-    | '/trips'
+  to: '/' | '/login' | '/register' | '/trips/$tripId' | '/trips/new' | '/trips'
   id:
     | '__root__'
     | '/'
-    | '/create-trip'
+    | '/_auth'
     | '/login'
     | '/register'
-    | '/trips/$tripId'
-    | '/trips/'
+    | '/_auth/trips/$tripId'
+    | '/_auth/trips/new'
+    | '/_auth/trips/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CreateTripRoute: typeof CreateTripRoute
+  AuthRoute: typeof AuthRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
-  TripsTripIdRoute: typeof TripsTripIdRoute
-  TripsIndexRoute: typeof TripsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -124,11 +123,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/create-trip': {
-      id: '/create-trip'
-      path: '/create-trip'
-      fullPath: '/create-trip'
-      preLoaderRoute: typeof CreateTripRouteImport
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -138,30 +137,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trips/': {
-      id: '/trips/'
+    '/_auth/trips/': {
+      id: '/_auth/trips/'
       path: '/trips'
       fullPath: '/trips'
-      preLoaderRoute: typeof TripsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthTripsIndexRouteImport
+      parentRoute: typeof AuthRoute
     }
-    '/trips/$tripId': {
-      id: '/trips/$tripId'
+    '/_auth/trips/new': {
+      id: '/_auth/trips/new'
+      path: '/trips/new'
+      fullPath: '/trips/new'
+      preLoaderRoute: typeof AuthTripsNewRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/trips/$tripId': {
+      id: '/_auth/trips/$tripId'
       path: '/trips/$tripId'
       fullPath: '/trips/$tripId'
-      preLoaderRoute: typeof TripsTripIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthTripsTripIdRouteImport
+      parentRoute: typeof AuthRoute
     }
   }
 }
 
+interface AuthRouteChildren {
+  AuthTripsTripIdRoute: typeof AuthTripsTripIdRoute
+  AuthTripsNewRoute: typeof AuthTripsNewRoute
+  AuthTripsIndexRoute: typeof AuthTripsIndexRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthTripsTripIdRoute: AuthTripsTripIdRoute,
+  AuthTripsNewRoute: AuthTripsNewRoute,
+  AuthTripsIndexRoute: AuthTripsIndexRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CreateTripRoute: CreateTripRoute,
+  AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
-  TripsTripIdRoute: TripsTripIdRoute,
-  TripsIndexRoute: TripsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

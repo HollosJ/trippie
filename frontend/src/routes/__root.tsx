@@ -1,8 +1,20 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import Nav from "../components/Nav";
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import Nav from '../components/Nav';
 
-export const Route = createRootRoute({
+interface AuthState {
+  isAuthenticated: boolean;
+  user: { id: string; email: string } | null;
+  register: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
+interface MyRouterContext {
+  auth: AuthState;
+}
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => {
     return (
       <>

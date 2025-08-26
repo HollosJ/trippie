@@ -1,9 +1,7 @@
-import { useAuth } from "../providers/auth";
-import { Link } from "@tanstack/react-router";
+import { useAuth } from '../providers/auth';
+import { Link } from '@tanstack/react-router';
 
-type NavProps = {};
-
-export default function Nav({}: NavProps) {
+export default function Nav() {
   const { user, logout } = useAuth();
 
   const isLoggedIn = !!user;
@@ -26,9 +24,7 @@ export default function Nav({}: NavProps) {
         {isLoggedIn ? (
           <button onClick={logout}>Logout</button>
         ) : (
-          <Link to="/login" className="[&.active]:font-bold">
-            Login
-          </Link>
+          <Link to="/login">Login</Link>
         )}
       </div>
     </nav>

@@ -2,7 +2,7 @@ export async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("auth-token");
   if (!token) throw new Error("No token found");
 
   const res = await fetch(`http://localhost:5000/api${endpoint}`, {

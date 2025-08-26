@@ -1,18 +1,101 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import LoginForm from '../components/LoginForm';
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router';
+import { useState, type FormEvent } from 'react';
+import { z } from 'zod';
+
+const redirectFallback = '/trips' as const;
 
 export const Route = createFileRoute('/login')({
-  component: RouteComponent,
+  validateSearch: z.object({
+    redirect: z.string().optional().catch(''),
+  }),
+  beforeLoad: ({ context, search }) => {
+    if (context.auth.isAuthenticated) {
+      throw redirect({ to: search.redirect || redirectFallback });
+    }
+  },
+  component: LoginComponent,
 });
 
-function RouteComponent() {
+function LoginComponent() {
+  const { auth } = Route.useRouteContext();
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const router = useRouter();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    try {
+      await auth.login(username, password);
+      // Navigate to the redirect URL using router navigation
+      await router.invalidate();
+
+      await navigate({
+        to: search.redirect || redirectFallback,
+      });
+    } catch (err) {
+      setError('Invalid username or password');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="container my-8 md:my-16 md:max-w-screen-md">
-      <h1 className="font-bold text-3xl mb-8">Login</h1>
+    <div className="min-h-screen flex items-center justify-center">
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-md w-full space-y-4 p-6 border rounded-lg"
+      >
+        <h1 className="text-2xl font-bold text-center">Sign In</h1>
 
-      <LoginForm />
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            {error}
+          </div>
+        )}
 
-      <Link to="/register">I dont have an account</Link>
+        <div>
+          <label htmlFor="username" className="block text-sm font-medium mb-1">
+            Username
+          </label>
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium mb-1">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? 'Signing in...' : 'Sign In'}
+        </button>
+      </form>
     </div>
   );
 }

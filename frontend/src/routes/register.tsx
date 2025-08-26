@@ -12,7 +12,9 @@ function RouteComponent() {
 
       <RegisterForm />
 
-      <Link to="/login">I already have an account</Link>
+      <p>
+        Aleady have an account? <Link to="/login">Login</Link>
+      </p>
     </div>
   );
 }

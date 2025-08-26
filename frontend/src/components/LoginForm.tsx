@@ -1,15 +1,15 @@
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
-import { useAuth } from "../providers/auth";
-import FormWrapper from "./Form";
+import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
+import { useState, type FormEvent } from 'react';
+import { useAuth } from '../providers/auth';
+import FormWrapper from './Form';
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const mutation = useMutation({
     mutationFn: async ({
@@ -23,11 +23,11 @@ export default function LoginForm() {
     },
     onSuccess: () => {
       navigate({
-        to: "/trips",
+        to: '/trips',
       });
     },
     onError: () => {
-      console.error("Error during login");
+      console.error('Error during login');
     },
   });
 
@@ -62,7 +62,7 @@ export default function LoginForm() {
         disabled={mutation.isPending}
         className="btn btn--primary"
       >
-        {mutation.isPending ? "Logging in..." : "Submit"}
+        {mutation.isPending ? 'Logging in...' : 'Submit'}
       </button>
     </FormWrapper>
   );
