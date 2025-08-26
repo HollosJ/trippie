@@ -7,7 +7,7 @@ function TripsGridItem({ trip }: { trip: Trip }) {
       to={`/trips/$tripId`}
       params={{ tripId: String(trip.id) }}
       key={trip.id}
-      className="border rounded shadow hover:opacity-50 p-4 transition-opacity"
+      className='border rounded shadow hover:opacity-50 p-4 transition-opacity bg-white'
     >
       {trip.name}
     </Link>
@@ -24,7 +24,7 @@ export default function TripsGrid({ trips, className }: TripsGridProps) {
     <div className={` ${className || ''}`}>
       {trips.length === 0 && <div>You have no trips yet!</div>}
 
-      <div className="grid sm:grid-cols-3 gap-4">
+      <div className='grid sm:grid-cols-3 gap-4'>
         {trips.map((trip) => (
           <TripsGridItem trip={trip} key={trip.id} />
         ))}
