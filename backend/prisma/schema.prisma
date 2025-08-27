@@ -22,20 +22,22 @@ model User {
 }
 
 model Trip {
-  id        Int        @id @default(autoincrement())
-  name      String
-  startDate DateTime
-  endDate   DateTime
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  activites Activity[]
+  id         Int        @id @default(autoincrement())
+  name       String
+  startDate  DateTime
+  endDate    DateTime
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  activities Activity[]
 }
 
 model Activity {
-  id     Int      @id @default(autoincrement())
-  name   String
-  date   DateTime
-  order  Int // Used for ordering within a date
-  trip   Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  tripId Int
+  id          Int      @id @default(autoincrement())
+  name        String
+  location    String?
+  description String?
+  date        DateTime
+  order       Int // Used for ordering within a date
+  trip        Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId      Int
 }
