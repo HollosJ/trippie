@@ -27,22 +27,33 @@ export const fetchTrips = async (req, res) => {
 export const fetchTrip = async (req, res) => {
   const { tripId } = req.params;
   const userId = req.userId;
+  const { activities } = req.query;
+  const includeActivities = activities === 'true';
 
   try {
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const trip = await prisma.trip.findUnique({
-      where: {
-        id: Number(tripId),
-        userId,
+    let trip = await prisma.trip.findFirst({
+      where: { id: Number(tripId), userId },
+      include: {
+        activities: includeActivities
+          ? { orderBy: [{ date: 'asc' }, { order: 'asc' }] }
+          : false,
       },
     });
+
     if (!trip) {
       return res.status(404).json({ error: 'Trip not found' });
     }
+    // Only include activities if requested
+    if (activities !== 'true') {
+      const { activities, ...tripWithoutActivities } = trip;
+      return res.status(200).json(tripWithoutActivities);
+    }
 
+    // Return trip without activities
     return res.status(200).json(trip);
   } catch (error) {
     console.error(error);
