@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "public"."Activity" ADD COLUMN     "position" DOUBLE PRECISION NOT NULL DEFAULT 0,
+ALTER COLUMN "order" DROP NOT NULL;

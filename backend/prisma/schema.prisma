@@ -37,7 +37,7 @@ model Activity {
   location    String?
   description String?
   date        DateTime
-  order       Int // Used for ordering within a date
+  position    Float    @default(0) // Use float instead of Int, so we can do fractional indexing
   trip        Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
   tripId      Int
 }
