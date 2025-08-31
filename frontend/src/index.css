@@ -5,6 +5,7 @@
 /* https://tailwindcss.com/docs/theme */
 @theme {
   /* Your custom theme styles go here (replaces :root) */
+  --font-sans: 'Bricolage Grotesque', sans-serif;
 }
 
 /* Add your own default base styles for specific HTML elements, for example: */
@@ -29,7 +30,7 @@
 
 @layer components {
   .btn {
-    @apply inline-flex rounded items-center justify-center px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex rounded items-center justify-center px-4 py-2 hover:opacity-75 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow;
   }
 
   .btn--primary {
@@ -37,7 +38,11 @@
   }
 
   .btn--secondary {
-    @apply bg-white text-black border border-black;
+    @apply bg-white text-black;
+  }
+
+  .btn--danger {
+    @apply bg-red-500 text-white;
   }
 }
 
