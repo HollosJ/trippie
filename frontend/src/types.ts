@@ -8,14 +8,25 @@ export interface Trip {
   name: string;
   startDate: string;
   endDate: string;
-  userId?: number;
+  userId: number;
+  activities?: Activity[];
+}
+
+export interface TripWithActivitiesByDate {
+  id: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+  userId: number;
+  activities: Record<string, Activity[]>;
 }
 
 export interface Activity {
-  id: number
+  id: number;
   name: string;
-  location: string;
+  location: string | null;
+  description: string | null;
   date: string;
-  description: string;
+  position: number;
+  tripId: number;
 }
-

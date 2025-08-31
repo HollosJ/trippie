@@ -15,12 +15,12 @@ function Trips() {
   const trips = Route.useLoaderData() as Trip[];
 
   return (
-    <div className="container my-8 md:my-16 md:max-w-screen-md">
-      <h1 className="text-3xl">My Trips</h1>
+    <div className='container my-8 md:my-16 md:max-w-screen-md'>
+      <h1 className='text-3xl'>My Trips</h1>
 
-      <TripsGrid trips={trips} className="mt-8" />
+      <TripsGrid trips={trips} className='mt-8' />
 
-      <Link to="/trips/new" className="btn btn--primary mt-8">
+      <Link to='/trips/new' className='btn btn--primary mt-8'>
         Create New Trip
       </Link>
     </div>

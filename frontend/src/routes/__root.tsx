@@ -1,6 +1,5 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import Nav from '../components/Nav';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -18,7 +17,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => {
     return (
       <>
-        <Nav />
+        {/* <Nav /> */}
 
         {/* Page contents */}
         <Outlet />

@@ -39,7 +39,7 @@ export const fetchTrip = async (req, res) => {
       where: { id: Number(tripId), userId },
       include: {
         activities: includeActivities
-          ? { orderBy: [{ date: 'asc' }, { order: 'asc' }] }
+          ? { orderBy: [{ date: 'asc' }, { position: 'asc' }] }
           : false,
       },
     });

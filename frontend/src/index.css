@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -16,12 +16,6 @@
   h5,
   h6 {
     @apply font-bold;
-  }
-
-  /* Re-introduce the pointer cursor for all non-disabled buttons */
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    cursor: pointer;
   }
 
   button:disabled {
