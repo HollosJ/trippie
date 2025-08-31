@@ -5,6 +5,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { motion } from 'framer-motion';
 
 interface DayColumnProps {
   title: string;
@@ -44,6 +45,13 @@ export default function DayColumn({
               active={activeId === activity.id}
             />
           ))}
+          <motion.button
+            layout
+            key={`add-new-${title}`}
+            className='btn btn--secondary'
+          >
+            <PlusCircle />
+          </motion.button>
         </div>
       </div>
     </SortableContext>
