@@ -30,7 +30,7 @@ function TripPage() {
 
   return (
     <div className='flex'>
-      <TripAside trip={trip} />
+      <TripAside trip={trip} handleDelete={deleteMutation.mutate} />
 
       <TripBoard trip={trip} />
     </div>

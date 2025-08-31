@@ -39,30 +39,6 @@ export default function TripBoard({ trip }: TripBoardProps) {
 
   const updateActivity = useMutation({
     mutationFn: async (activity: IActivity) => await patchActivity(activity),
-    // onMutate: async (activity) => {
-    //   await queryClient.cancelQueries({ queryKey: ['trip', trip.id] });
-
-    //   const previousTrip = queryClient.getQueryData(['trip', trip.id]);
-
-    //   queryClient.setQueryData(['trip', trip.id], (oldTrip: any) => {
-    //     return {
-    //       ...oldTrip,
-    //       activities: oldTrip.activities.map((a: IActivity) =>
-    //         a.id === activity.id ? { ...a, ...activity } : a
-    //       ),
-    //     };
-    //   });
-
-    //   return { previousTrip };
-    // },
-    // onError: (_err, _activity, context) => {
-    //   if (context?.previousTrip) {
-    //     queryClient.setQueryData(['trip', trip.id], context.previousTrip);
-    //   }
-    // },
-    // onSettled: () => {
-    //   queryClient.invalidateQueries({ queryKey: ['trip', trip.id] });
-    // },
   });
 
   const sensors = useSensors(
@@ -100,7 +76,7 @@ export default function TripBoard({ trip }: TripBoardProps) {
   }
 
   function handleDragOver(event: DragOverEvent) {
-    const { active, over, delta } = event;
+    const { active, over } = event;
 
     if (!over) return;
 
@@ -192,7 +168,7 @@ export default function TripBoard({ trip }: TripBoardProps) {
   }
 
   return (
-    <div className='flex whitespace-nowrap h-dvh'>
+    <div className='flex whitespace-nowrap h-dvh overflow-x-auto'>
       <DndContext
         sensors={sensors}
         collisionDetection={pointerWithin}
