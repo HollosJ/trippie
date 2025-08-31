@@ -37,30 +37,30 @@ export function ModalProvider({ children }: { children: ReactNode }) {
           <AnimatePresence>
             {modalContent && (
               <motion.div
-                key='backdrop'
-                className='fixed inset-0 bg-black/50 flex backdrop-blur-xs items-center justify-center z-50'
+                key="backdrop"
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs"
                 onClick={closeModal}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
                 <motion.div
-                  key='modal'
+                  key="modal"
                   initial={{ scale: 0.75 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0.75 }}
                   transition={{ duration: 0.2 }}
-                  className='bg-white rounded-2xl shadow-lg w-full max-w-md p-6 relative'
+                  className="relative w-full max-w-md rounded bg-white p-6 shadow-lg"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {modalTitle && (
-                    <h2 className='text-2xl font-semibold mb-4'>
+                    <h2 className="mb-4 text-2xl font-semibold">
                       {modalTitle}
                     </h2>
                   )}
                   <button
                     onClick={closeModal}
-                    className='absolute top-2 right-2 text-gray-500 hover:text-gray-800 cursor-pointer'
+                    className="absolute top-2 right-2 cursor-pointer text-gray-500 transition-colors hover:text-gray-800"
                   >
                     <X size={32} />
                   </button>
@@ -69,7 +69,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
               </motion.div>
             )}
           </AnimatePresence>,
-          modalRoot
+          modalRoot,
         )}
     </ModalContext.Provider>
   );

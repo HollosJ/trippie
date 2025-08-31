@@ -37,30 +37,30 @@ export function RegisterForm() {
   };
 
   return (
-    <Form className='grid gap-8' onSubmit={handleSubmit}>
+    <Form className="grid gap-8" onSubmit={handleSubmit}>
       <input
-        type='email'
-        placeholder='Email'
+        type="email"
+        placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <input
-        type='password'
-        placeholder='Password'
+        type="password"
+        placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
 
       {mutation.isError && (
-        <span className='font-bold text-red-500'>
+        <span className="font-bold text-red-500">
           {(mutation.error as Error).message}
         </span>
       )}
 
       <button
-        type='submit'
+        type="submit"
         disabled={mutation.isPending}
-        className='btn btn--primary'
+        className="btn btn--primary"
       >
         {mutation.isPending ? 'Registering...' : 'Register'}
       </button>

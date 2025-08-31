@@ -29,7 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem('auth-token');
     if (token) {
-      // Validate token with your API
       fetch('http://localhost:5000/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -55,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         Loading...
       </div>
     );

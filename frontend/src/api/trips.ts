@@ -8,9 +8,14 @@ export async function deleteTrip(tripId: number) {
 }
 
 export async function patchActivity(activity: Activity) {
-  const { id } = activity;
-  return apiFetch(`/activities/${id}`, {
+  return apiFetch(`/activities/${activity.id}`, {
     method: 'PATCH',
     body: JSON.stringify(activity),
+  });
+}
+
+export async function deleteActivity(activity: Activity) {
+  return apiFetch(`/activities/${activity.id}`, {
+    method: 'DELETE',
   });
 }

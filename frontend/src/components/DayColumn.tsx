@@ -13,6 +13,7 @@ interface DayColumnProps {
   activities: IActivity[];
   activeId?: number | null;
   active?: boolean;
+  onDeleteActivity: (activity: IActivity) => void;
 }
 
 export default function DayColumn({
@@ -20,6 +21,7 @@ export default function DayColumn({
   activities,
   activeId,
   active = false,
+  onDeleteActivity,
 }: DayColumnProps) {
   const { setNodeRef } = useDroppable({ id: title });
 
@@ -32,24 +34,25 @@ export default function DayColumn({
       strategy={verticalListSortingStrategy}
     >
       <div
-        className={`min-w-72 max-w-72 flex flex-col transition-colors ${active ? 'bg-gray-50' : ''}`}
+        className={`flex max-w-72 min-w-72 flex-col transition-colors ${active ? 'bg-gray-200' : ''}`}
       >
-        <div className='p-2'>
-          <h2 className='text-gray-400'>{displayDate}</h2>
+        <div className="p-2">
+          <h2 className="text-gray-400">{displayDate}</h2>
         </div>
 
-        <div className='flex flex-col gap-2 mt-4 flex-1 p-2' ref={setNodeRef}>
+        <div className="mt-4 flex flex-1 flex-col gap-2 p-2" ref={setNodeRef}>
           {activities.map((activity) => (
             <Activity
               key={activity.id}
               activity={activity}
               active={activeId === activity.id}
+              onDelete={onDeleteActivity}
             />
           ))}
           <motion.button
             layout
             key={`add-new-${title}`}
-            className='btn btn--secondary'
+            className="btn btn--secondary"
           >
             <PlusCircle />
           </motion.button>

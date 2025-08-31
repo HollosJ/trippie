@@ -24,6 +24,23 @@ export const updateActivity = async (req, res) => {
     res.status(200).json(updatedActivity);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json(error);
+  }
+};
+
+export const deleteActivity = async (req, res) => {
+  const userId = req.userId;
+  const { activityId } = req.params;
+
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    await prisma.activity.delete({
+      where: { id: Number(activityId) },
+    });
+    res.status(200).json({ message: 'Activity deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting activity:', error);
+    res.status(500).json({ error });
   }
 };

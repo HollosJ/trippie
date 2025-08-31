@@ -8,12 +8,14 @@ interface ActivityProps {
   activity: Activity | undefined;
   active?: boolean;
   className?: string;
+  onDelete?: (activity: Activity) => void;
 }
 
 export default function Activity({
   activity,
   active,
   className,
+  onDelete,
 }: ActivityProps) {
   if (!activity) return null;
 
@@ -29,26 +31,40 @@ export default function Activity({
 
   return (
     <div
-      className={`p-2 bg-white rounded whitespace-normal text-lg relative flex items-center justify-between cursor-pointer ${
-        active ? 'opacity-0' : ''
+      className={`relative flex cursor-pointer items-center justify-between rounded bg-white p-2 text-lg whitespace-normal shadow ${
+        active ? 'opacity-50' : ''
       } ${className || ''}`}
       style={style}
       ref={setNodeRef}
-      onClick={() =>
-        openModal(
-          <pre>{JSON.stringify(activity, null, 2)}</pre>,
-          'Edit Activity'
-        )
-      }
+      onClick={() => {
+        if (!active) {
+          openModal(
+            <div>
+              <pre>{JSON.stringify(activity, null, 2)}</pre>
+
+              <button
+                className="btn btn--danger"
+                onClick={() => {
+                  onDelete && onDelete(activity);
+                  closeModal();
+                }}
+              >
+                Delete
+              </button>
+            </div>,
+            'Edit Activity',
+          );
+        }
+      }}
     >
       <div>{activity.name}</div>
 
       <button
         {...attributes}
         {...listeners}
-        className='cursor-grab p-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors touch-none'
+        className="cursor-grab touch-none rounded bg-gray-200 p-1 transition-colors hover:bg-gray-300"
       >
-        <GripVertical className='stroke-gray-600' />
+        <GripVertical className="stroke-gray-600" />
       </button>
     </div>
   );
