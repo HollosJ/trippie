@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useState, type FormEvent } from 'react';
-import { useAuth } from '../providers/auth';
+import { useAuth } from '../context/AuthProvider';
 import FormWrapper from './Form';
 
 export default function LoginForm() {
@@ -37,30 +37,30 @@ export default function LoginForm() {
   };
 
   return (
-    <FormWrapper className="grid gap-8" onSubmit={handleSubmit}>
+    <FormWrapper className='grid gap-8' onSubmit={handleSubmit}>
       <input
-        type="email"
-        placeholder="Email"
+        type='email'
+        placeholder='Email'
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <input
-        type="password"
-        placeholder="Password"
+        type='password'
+        placeholder='Password'
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
 
       {mutation.isError && (
-        <span className="font-bold text-red-500">
+        <span className='font-bold text-red-500'>
           {(mutation.error as Error).message}
         </span>
       )}
 
       <button
-        type="submit"
+        type='submit'
         disabled={mutation.isPending}
-        className="btn btn--primary"
+        className='btn btn--primary'
       >
         {mutation.isPending ? 'Logging in...' : 'Submit'}
       </button>

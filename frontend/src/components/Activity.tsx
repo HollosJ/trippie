@@ -2,6 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
 import type { Activity } from '../types';
+import { useModal } from '../context/ModalProvider';
 
 interface ActivityProps {
   activity: Activity | undefined;
@@ -16,6 +17,8 @@ export default function Activity({
 }: ActivityProps) {
   if (!activity) return null;
 
+  const { openModal, closeModal } = useModal();
+
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: activity.id });
 
@@ -24,10 +27,6 @@ export default function Activity({
     transition,
   };
 
-  function handleModalOpen() {
-    console.log('CLICK!');
-  }
-
   return (
     <div
       className={`p-2 bg-white rounded whitespace-normal text-lg relative flex items-center justify-between cursor-pointer ${
@@ -35,7 +34,12 @@ export default function Activity({
       } ${className || ''}`}
       style={style}
       ref={setNodeRef}
-      onClick={handleModalOpen}
+      onClick={() =>
+        openModal(
+          <pre>{JSON.stringify(activity, null, 2)}</pre>,
+          'Edit Activity'
+        )
+      }
     >
       <div>{activity.name}</div>
 

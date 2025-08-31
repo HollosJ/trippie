@@ -1,6 +1,7 @@
 import { RouterProvider } from '@tanstack/react-router';
-import { AuthProvider, useAuth } from './providers/auth';
+import { AuthProvider, useAuth } from './context/AuthProvider';
 import { router } from './router';
+import { ModalProvider } from './context/ModalProvider';
 
 function InnerApp() {
   const auth = useAuth();
@@ -10,7 +11,9 @@ function InnerApp() {
 function App() {
   return (
     <AuthProvider>
-      <InnerApp />
+      <ModalProvider>
+        <InnerApp />
+      </ModalProvider>
     </AuthProvider>
   );
 }
