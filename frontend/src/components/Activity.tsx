@@ -46,7 +46,7 @@ export default function Activity({
       <button
         {...attributes}
         {...listeners}
-        className='cursor-grab p-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors'
+        className='cursor-grab p-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors touch-none'
       >
         <GripVertical className='stroke-gray-600' />
       </button>

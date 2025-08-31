@@ -4,6 +4,7 @@ import {
   KeyboardSensor,
   PointerSensor,
   pointerWithin,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -68,7 +69,8 @@ export default function TripBoard({ trip }: TripBoardProps) {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
+    useSensor(TouchSensor)
   );
 
   function findContainer(id: string) {
