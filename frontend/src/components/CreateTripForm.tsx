@@ -1,11 +1,11 @@
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiFetch } from '../utils/api';
-import Form from './Form';
-import { useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { createTrip } from '../api/trips';
+import Form from './Form';
 
 interface CreateTripFormProps {
   className?: string;
@@ -22,23 +22,14 @@ const tripSchema = z
     message: 'End date cannot be before start date',
   });
 
-type Trip = z.infer<typeof tripSchema>;
+export type CreateTripType = z.infer<typeof tripSchema>;
 
 export default function CreateTripForm({ className }: CreateTripFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (trip: Trip) => {
-      return apiFetch('/trips', {
-        method: 'POST',
-        body: JSON.stringify({
-          ...trip,
-          startDate: new Date(trip.startDate),
-          endDate: new Date(trip.endDate),
-        }),
-      });
-    },
+    mutationFn: createTrip,
     onSuccess: (data: any /* TODO */) => {
       queryClient.invalidateQueries({ queryKey: ['trips'] });
 
@@ -55,7 +46,7 @@ export default function CreateTripForm({ className }: CreateTripFormProps) {
     formState: { errors },
     watch,
     setValue,
-  } = useForm<Trip>({
+  } = useForm<CreateTripType>({
     resolver: zodResolver(tripSchema),
     defaultValues: {
       name: '',
@@ -77,34 +68,34 @@ export default function CreateTripForm({ className }: CreateTripFormProps) {
     }
   }, [startDate, watch, setValue]);
 
-  const onSubmit = (data: Trip) => mutation.mutate(data);
+  const onSubmit = (data: CreateTripType) => mutation.mutate(data);
 
   return (
-    <div className='container md:max-w-screen-md my-8 md:my-16'>
-      <h1 className='text-5xl'>Create Trip</h1>
+    <div className="container my-8 md:my-16 md:max-w-screen-md">
+      <h1 className="text-5xl">Create Trip</h1>
 
       <Form
         onSubmit={handleSubmit(onSubmit)}
         className={`${className || ''} mt-8 grid gap-8`}
       >
-        <div className='grid'>
-          <label htmlFor='name'>Where are you going?</label>
-          <input id='name' {...register('name')} />
+        <div className="grid">
+          <label htmlFor="name">Where are you going?</label>
+          <input id="name" {...register('name')} />
           {errors.name && <span>{errors.name.message}</span>}
         </div>
 
-        <div className='grid grid-cols-2 gap-8'>
-          <div className='grid'>
-            <label htmlFor='startDate'>From</label>
-            <input id='startDate' type='date' {...register('startDate')} />
+        <div className="grid grid-cols-2 gap-8">
+          <div className="grid">
+            <label htmlFor="startDate">From</label>
+            <input id="startDate" type="date" {...register('startDate')} />
             {errors.startDate && <span>{errors.startDate.message}</span>}
           </div>
 
-          <div className='grid'>
-            <label htmlFor='endDate'>End Date</label>
+          <div className="grid">
+            <label htmlFor="endDate">End Date</label>
             <input
-              id='endDate'
-              type='date'
+              id="endDate"
+              type="date"
               {...register('endDate')}
               min={startDate}
             />
@@ -112,7 +103,7 @@ export default function CreateTripForm({ className }: CreateTripFormProps) {
           </div>
         </div>
 
-        <button type='submit' className='btn btn--primary'>
+        <button type="submit" className="btn btn--primary">
           {mutation.isPending ? 'Submitting...' : 'Submit'}
         </button>
       </Form>
