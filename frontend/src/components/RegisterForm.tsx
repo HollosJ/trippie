@@ -4,7 +4,11 @@ import { useState, type FormEvent } from 'react';
 import { useAuth } from '../context/AuthProvider';
 import Form from './Form';
 
-export function RegisterForm() {
+interface RegisterFormProps {
+  className?: string;
+}
+
+export function RegisterForm({ className }: RegisterFormProps) {
   const navigate = useNavigate();
   const { register } = useAuth();
 
@@ -37,24 +41,27 @@ export function RegisterForm() {
   };
 
   return (
-    <Form className="grid gap-8" onSubmit={handleSubmit}>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+    <Form className={`grid gap-8 ${className || ''}`} onSubmit={handleSubmit}>
+      <div className="grid">
+        <label htmlFor="email">Email</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
+
+      <div className="grid">
+        <label htmlFor="password">Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
 
       {mutation.isError && (
-        <span className="font-bold text-red-500">
-          {(mutation.error as Error).message}
-        </span>
+        <span className="font-bold text-red-500">{mutation.error.message}</span>
       )}
 
       <button
