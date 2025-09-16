@@ -61,7 +61,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
       </div>
 
       {mutation.isError && (
-        <span className="font-bold text-red-500">{mutation.error.message}</span>
+        <span className="text-danger font-bold">{mutation.error.message}</span>
       )}
 
       <button

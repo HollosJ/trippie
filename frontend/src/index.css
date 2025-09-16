@@ -6,6 +6,7 @@
 @theme {
   /* Your custom theme styles go here (replaces :root) */
   --color-black: #040403;
+  --color-danger: var(--color-red-600);
   --font-sans: 'Bricolage Grotesque', sans-serif;
 }
 
@@ -49,7 +50,7 @@
   }
 
   .btn--danger {
-    @apply bg-red-500 text-white;
+    @apply bg-danger text-white;
   }
 }
 

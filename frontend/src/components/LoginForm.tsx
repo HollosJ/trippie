@@ -52,7 +52,7 @@ export default function LoginForm() {
       />
 
       {mutation.isError && (
-        <span className='font-bold text-red-500'>
+        <span className="text-danger font-bold">
           {(mutation.error as Error).message}
         </span>
       )}

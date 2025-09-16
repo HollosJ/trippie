@@ -62,7 +62,7 @@ function LoginComponent() {
         className="mt-8 grid gap-8 rounded bg-white p-8 shadow"
       >
         {error && (
-          <div className="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+          <div className="border-danger text-danger rounded border bg-red-100 px-4 py-3">
             {error}
           </div>
         )}

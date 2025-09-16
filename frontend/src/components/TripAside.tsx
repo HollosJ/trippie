@@ -83,7 +83,7 @@ export default function TripAside({ trip, handleDelete }: TripAsideProps) {
 
       {!isCollapsed && (
         <button
-          className="self-end rounded p-2 transition-colors hover:bg-red-600/50"
+          className="btn btn--danger self-end"
           onClick={() =>
             openModal(
               <>
