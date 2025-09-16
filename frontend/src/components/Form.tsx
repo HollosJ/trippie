@@ -8,10 +8,7 @@ interface FormProps {
 
 export default function Form({ children, onSubmit, className }: FormProps) {
   return (
-    <form
-      className={`bg-white p-4 md:p-8 border rounded ${className || ''}`}
-      onSubmit={onSubmit}
-    >
+    <form className={`${className || ''}`} onSubmit={onSubmit}>
       {children}
     </form>
   );
