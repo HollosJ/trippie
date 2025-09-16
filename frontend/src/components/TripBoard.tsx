@@ -229,7 +229,6 @@ export default function TripBoard({ trip }: TripBoardProps) {
     setActiveColumnId(null);
   }
 
-  /* Actions */
   function handleDeleteActivity(activity: IActivity) {
     setData((prev) => {
       const previousClone = structuredClone(prev);
