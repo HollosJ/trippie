@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Trip } from '../types';
 import {
   PanelLeftClose,
@@ -17,12 +17,30 @@ interface TripAsideProps {
 
 export default function TripAside({ trip, handleDelete }: TripAsideProps) {
   const { openModal, closeModal } = useModal();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const savedSettings = localStorage.getItem('dashboardSettings');
+    if (!savedSettings) return false;
+
+    try {
+      const parsed = JSON.parse(savedSettings);
+      return parsed.sidebarCollapsed ?? false;
+    } catch {
+      return false;
+    }
+  });
 
   const styles = {
     collapsed: 'w-16 p-2',
     expanded: 'w-70 p-2',
   };
+
+  // Remember user preferencee
+  useEffect(() => {
+    localStorage.setItem(
+      'dashboardSettings',
+      JSON.stringify({ sidebarCollapsed: isCollapsed }),
+    );
+  }, [isCollapsed]);
 
   return (
     <aside
