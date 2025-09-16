@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { deleteTrip } from '../api/trips';
+import LoadingSpinner from '../components/LoadingSpinner';
+import TripAside from '../components/TripAside';
 import TripBoard from '../components/TripBoard';
 import type { Trip } from '../types';
 import { apiFetch } from '../utils/api';
-import TripAside from '../components/TripAside';
 
 export const Route = createFileRoute('/_auth/trips/$tripId')({
   // /trips/:id
@@ -16,7 +17,7 @@ function TripPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: trip } = useQuery<Trip>({
+  const { data, isPending, error } = useQuery<Trip>({
     queryKey: ['trip', tripId],
     queryFn: () =>
       apiFetch(`/trips/${tripId}?activities=true&groupByDate=true`),
@@ -30,12 +31,30 @@ function TripPage() {
     },
   });
 
-  if (!trip) return <div>Loading...</div>;
+  if (error)
+    return (
+      <div className="container my-8 text-center md:my-16">
+        <h1 className="text-danger text-3xl">
+          There was an error fetching this trip!
+        </h1>
+
+        <Link to="/trips" className="mt-8 font-bold">
+          Go back
+        </Link>
+      </div>
+    );
+
+  if (isPending || !data)
+    return (
+      <div className="container my-8 flex items-center justify-center md:my-16">
+        <LoadingSpinner />
+      </div>
+    );
 
   return (
-    <div className='flex'>
-      <TripAside trip={trip} handleDelete={deleteTripMutation.mutate} />
-      <TripBoard trip={trip} />
+    <div className="flex">
+      <TripAside trip={data} handleDelete={deleteTripMutation.mutate} />
+      <TripBoard trip={data} />
     </div>
   );
 }
