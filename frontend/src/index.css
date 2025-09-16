@@ -29,14 +29,15 @@
     cursor: not-allowed;
   }
 
-  input {
-    @apply border rounded p-2;
+  input,
+  textarea {
+    @apply rounded border p-2;
   }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex rounded items-center justify-center px-4 py-2 hover:opacity-75 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow;
+    @apply inline-flex items-center justify-center rounded px-4 py-2 shadow transition-opacity hover:opacity-75 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn--primary {
