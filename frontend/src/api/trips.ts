@@ -20,6 +20,13 @@ export async function deleteTrip(tripId: number) {
   });
 }
 
+export async function createActivity(activity: Activity) {
+  return apiFetch('/activities', {
+    method: 'POST',
+    body: JSON.stringify(activity),
+  });
+}
+
 export async function patchActivity(activity: Activity) {
   return apiFetch(`/activities/${activity.id}`, {
     method: 'PATCH',

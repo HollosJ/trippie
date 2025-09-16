@@ -1,5 +1,24 @@
 import prisma from '../config/db.js';
 
+export const createActivity = async (req, res) => {
+  const userId = req.userId;
+
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    const activity = await prisma.activity.create({
+      data: {
+        userId,
+        ...req.body,
+      },
+    });
+    res.status(201).json(activity);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+};
+
 export const updateActivity = async (req, res) => {
   const userId = req.userId;
   const { activityId } = req.params;
