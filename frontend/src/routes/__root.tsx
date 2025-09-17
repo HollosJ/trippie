@@ -1,5 +1,10 @@
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import {
+  createRootRouteWithContext,
+  Outlet,
+  useLocation,
+} from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import Nav from '../components/Nav';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -15,9 +20,11 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => {
+    const { pathname } = useLocation();
+
     return (
       <>
-        {/* <Nav /> */}
+        {!pathname.startsWith('/trips/') && <Nav />}
 
         {/* Page contents */}
         <Outlet />
