@@ -8,7 +8,6 @@ export const createActivity = async (req, res) => {
   try {
     const activity = await prisma.activity.create({
       data: {
-        userId,
         ...req.body,
       },
     });
