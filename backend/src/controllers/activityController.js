@@ -1,5 +1,25 @@
 import prisma from '../config/db.js';
 
+export const fetchActivities = async (req, res) => {
+  const userId = req.userId;
+  const { tripId } = req.params;
+
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    const activities = await prisma.activity.findMany({
+      where: {
+        tripId: Number(tripId),
+      },
+    });
+
+    res.status(200).json(activities);
+  } catch (error) {
+    console.error('Error fetching activities:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 export const createActivity = async (req, res) => {
   const userId = req.userId;
 

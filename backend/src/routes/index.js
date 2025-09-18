@@ -5,8 +5,8 @@ import activityRoutes from './activityRoutes.js';
 
 const router = express.Router();
 
-router.use('/auth', authRoutes);
-router.use('/trips', tripRoutes);
-router.use('/activities', activityRoutes);
+router.use('/', authRoutes);
+router.use('/', tripRoutes);
+router.use('/', activityRoutes);
 
 export default router;
