@@ -1,51 +1,27 @@
-import type { Activity, Trip } from '../types';
-
 export const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
-export function createDayArray(start: string, end: string) {
+export function createDayArray(startDate: string, endDate: string) {
   const arr: string[] = [];
-  const current = new Date(start);
+  const current = new Date(startDate);
 
-  while (current <= new Date(end)) {
-    // Force UTC midnight ISO
-    arr.push(current.toISOString().split('T')[0] + 'T00:00:00.000Z');
-    current.setUTCDate(current.getUTCDate() + 1);
+  while (current <= new Date(endDate)) {
+    arr.push(current.toISOString());
+    current.setDate(current.getDate() + 1);
   }
 
   return arr;
 }
 
-export function groupActivitiesByDate<
-  T extends Trip & { activities: Activity[] },
->(trip: T) {
-  const dateArray = createDayArray(trip.startDate, trip.endDate);
-
-  const grouped = trip.activities.reduce(
-    (acc, activity) => {
-      const day =
-        new Date(activity.date).toISOString().split('T')[0] + 'T00:00:00.000Z';
-      (acc[day] ||= []).push(activity);
-      return acc;
-    },
-    {} as Record<string, Activity[]>
-  );
-
-  const fullMap: Record<string, Activity[]> = {};
-  for (const day of dateArray) {
-    fullMap[day] = grouped[day] || [];
-  }
-  return fullMap;
-}
-
 export function calculateFractionalIndex(
-  prevActivity: Activity,
-  nextActivity: Activity
+  beforePosition?: number,
+  afterPosition?: number,
 ) {
-  return prevActivity && nextActivity
-    ? (prevActivity.position + nextActivity.position) / 2
-    : prevActivity
-      ? prevActivity.position + 1
-      : nextActivity
-        ? nextActivity.position / 2
-        : 1;
+  // No existing items in the column
+  if (beforePosition === undefined && afterPosition === undefined) return 1;
+  // First item in the column
+  else if (beforePosition === undefined) return afterPosition! - 1;
+  // Last item in the column
+  else if (afterPosition === undefined) return beforePosition + 1;
+  // Between 2 items
+  else return (beforePosition + afterPosition) / 2;
 }

@@ -1,276 +1,235 @@
-import {
-  DndContext,
-  DragOverlay,
-  KeyboardSensor,
-  PointerSensor,
-  pointerWithin,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type DragOverEvent,
-  type DragStartEvent,
-} from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import { deleteActivity, patchActivity } from '../api/trips';
-import type { Activity as IActivity, Trip } from '../types';
-import {
-  calculateFractionalIndex,
-  groupActivitiesByDate,
-} from '../utils/helpers';
-import Activity from './Activity';
-import DayColumn from './DayColumn';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { patchActivity } from '../api/trips';
 import { useModal } from '../context/ModalProvider';
+import type { Activity, Trip } from '../types';
+import { apiFetch } from '../utils/api';
+import { calculateFractionalIndex, createDayArray } from '../utils/helpers';
+import ActivityComponent from './Activity';
+import DropIndicator from './DropIndicator';
 
 interface TripBoardProps {
   trip: Trip;
 }
 
 export default function TripBoard({ trip }: TripBoardProps) {
+  const queryClient = useQueryClient();
   const { openModal, closeModal } = useModal();
 
-  const [data, setData] = useState(
-    groupActivitiesByDate(trip as Trip & { activities: IActivity[] }),
-  );
-
-  const [activeId, setActiveId] = useState<number | null>(null);
-  const [activeColumnId, setActiveColumnId] = useState<string | null>(null);
-
-  const queryClient = useQueryClient();
-
-  /* Mutations */
-  const updateActivityMutation = useMutation({
-    mutationFn: async ({
-      movedItem,
-    }: {
-      movedItem: IActivity;
-      previousData: typeof data;
-    }) => {
-      return patchActivity(movedItem);
-    },
-    onMutate: async ({ previousData }) => {
-      return { previousData };
-    },
-    onError: (err, _variables, context) => {
-      if (context?.previousData) {
-        setData(context.previousData); // rollback UI
-
-        openModal(
-          <div className="grid">
-            <p>There was an issue updating your activity. Please try again.</p>
-
-            <button
-              onClick={closeModal}
-              className="btn btn--primary mt-8 place-self-end"
-            >
-              Okay!
-            </button>
-          </div>,
-          'Whoops!',
-        );
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['trip', trip.id] });
-    },
+  const days = createDayArray(trip.startDate, trip.endDate);
+  const { data: activities = [], isPending } = useQuery<Activity[]>({
+    queryKey: ['activities', trip.id],
+    queryFn: () => apiFetch(`/trips/${trip.id}/activities`),
   });
+  const [localActivities, setLocalActivities] =
+    useState<Activity[]>(activities);
+  const [draggingId, setDraggingId] = useState<number | null>(null);
+  const [activeColumn, setActiveColumn] = useState<string | null>(null);
 
-  const deleteActivityMutation = useMutation({
-    mutationFn: deleteActivity,
-    onMutate: async (activity: IActivity) => {
-      // take snapshot of current state
-      return { previousData: data };
-    },
-    onError: (_err, activity, context) => {
-      if (context?.previousData) {
-        setData(context.previousData); // rollback UI
-        openModal(
-          <div className="grid">
-            <p>Failed to delete activity. Please try again.</p>
-            <button
-              onClick={closeModal}
-              className="btn btn--primary mt-8 place-self-end"
-            >
-              Okay!
-            </button>
-          </div>,
-          'Whoops!',
-        );
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['trip', trip.id] });
-    },
-  });
+  useEffect(() => {
+    setLocalActivities(activities);
+  }, [activities]);
 
-  /* DnD */
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-    useSensor(TouchSensor),
-  );
-
-  function findContainer(id: string) {
-    // first, check if id is a column/date
-    if (id in data) return id;
-
-    // otherwise, look for activity in data
-    return Object.keys(data).find((date) =>
-      data[date].some((activity) => activity.id === Number(id)),
-    );
-  }
-
-  function findActivity(id: number) {
-    for (const date in data) {
-      const activity = data[date].find((a) => a.id === id);
-
-      if (activity) return activity;
-    }
-    return undefined;
-  }
-
-  function handleDragStart(event: DragStartEvent) {
-    const { active } = event;
-    const { id } = active;
-
-    setActiveId(id as number);
-  }
-
-  function handleDragOver(event: DragOverEvent) {
-    const { active, over } = event;
-
-    if (!over) return;
-
-    if (active.id !== over.id) setActiveColumnId(over.id.toString());
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) {
-      setActiveId(null);
-      setActiveColumnId(null);
-      return;
-    }
-
-    const activeId = Number(active.id);
-    const activeContainer = findContainer(active.id.toString());
-    const overContainer = findContainer(over.id.toString());
-    if (!activeContainer || !overContainer) return;
-
-    setData((prev) => {
-      const previousClone = structuredClone(prev); // snapshot for rollback
-      const activeItems = [...previousClone[activeContainer]];
-      const overItems = [...previousClone[overContainer]];
-
-      const activeIndex = activeItems.findIndex((item) => item.id === activeId);
-      const overIndex = overItems.findIndex(
-        (item) => item.id === Number(over.id),
-      );
-
-      let movedItem = activeItems[activeIndex];
-
-      if (activeContainer === overContainer) {
-        // same column reorder
-        activeItems.splice(activeIndex, 1);
-        const newIndex = overIndex >= 0 ? overIndex : activeItems.length;
-
-        const prevItem = activeItems[newIndex - 1];
-        const nextItem = activeItems[newIndex];
-        const newPosition = calculateFractionalIndex(prevItem, nextItem);
-
-        movedItem = { ...movedItem, position: newPosition };
-        activeItems.splice(newIndex, 0, movedItem);
-
-        previousClone[activeContainer] = activeItems;
-      } else {
-        // different column move
-        activeItems.splice(activeIndex, 1);
-        let newIndex = overIndex >= 0 ? overIndex : overItems.length;
-
-        if (overIndex === overItems.length - 1) {
-          const activeRect = active.rect.current.translated;
-          const overRect = over.rect;
-          if (activeRect && overRect) {
-            const isBelowLast = activeRect.top > overRect.top + overRect.height;
-            if (isBelowLast) {
-              newIndex = overItems.length;
-            }
-          }
+  /* --- Drag & Drop logic --- */
+  const getNearestIndicator = (y: number, indicators: HTMLElement[]) => {
+    const DISTANCE_OFFSET = 20;
+    return indicators.reduce(
+      (closest, el) => {
+        const rect = el.getBoundingClientRect();
+        const offset = y - (rect.top + DISTANCE_OFFSET);
+        if (offset < 0 && offset > closest.offset) {
+          return { offset, element: el };
         }
+        return closest;
+      },
+      {
+        offset: Number.NEGATIVE_INFINITY,
+        element: indicators[indicators.length - 1],
+      },
+    ).element;
+  };
 
-        const prevItem = overItems[newIndex - 1];
-        const nextItem = overItems[newIndex];
-        const newPosition = calculateFractionalIndex(prevItem, nextItem);
+  const handleDragStart = (activityId: number) => {
+    setDraggingId(activityId);
+  };
 
-        movedItem = {
-          ...movedItem,
-          position: newPosition,
-          date: overContainer,
-        };
-        overItems.splice(newIndex, 0, movedItem);
+  const handleDragOver = (
+    event: React.DragEvent<HTMLDivElement>,
+    column: string,
+  ) => {
+    event.preventDefault();
 
-        previousClone[activeContainer] = activeItems;
-        previousClone[overContainer] = overItems;
+    setActiveColumn(column);
+
+    const indicators = Array.from(
+      document.querySelectorAll(`[data-column="${column}"]`),
+    ) as HTMLElement[];
+
+    // Reset indicator style
+    indicators.forEach((indicator) => {
+      indicator.style.opacity = '0';
+    });
+
+    const nearest = getNearestIndicator(event.clientY, indicators);
+    if (nearest) nearest.style.opacity = '1';
+  };
+
+  const handleDragLeave = () => {
+    setActiveColumn(null);
+    const indicators = Array.from(
+      document.querySelectorAll(`[data-column]`),
+    ) as HTMLElement[];
+    indicators.forEach((indicator) => {
+      indicator.style.opacity = '0';
+    });
+  };
+
+  const handleDragEnd = (
+    event: React.DragEvent<HTMLDivElement>,
+    column: string,
+  ) => {
+    event.preventDefault();
+
+    if (draggingId === null) return;
+
+    const indicators = Array.from(
+      document.querySelectorAll(`[data-column="${column}"]`),
+    ) as HTMLElement[];
+
+    const nearest = getNearestIndicator(event.clientY, indicators);
+    const beforeId = nearest?.dataset.before;
+
+    setLocalActivities((prev) => {
+      const copy = [...prev];
+      const dragged = copy.find((a) => a.id === draggingId);
+
+      if (!dragged) return prev;
+
+      // Update dragged activity's column
+      dragged.date = column;
+
+      // Remove from current list
+      const filtered = copy.filter((a) => a.id !== draggingId);
+
+      // Figure out new fractional position
+      const colActivities = filtered
+        .filter((a) => a.date === column)
+        .sort((a, b) => a.position - b.position);
+
+      let newPos: number;
+
+      if (!beforeId || beforeId === '-1') {
+        // Drop at end
+        newPos = colActivities.length
+          ? colActivities[colActivities.length - 1].position + 1
+          : 0;
+      } else {
+        const beforeActivity = colActivities.find(
+          (a) => a.id === Number(beforeId),
+        );
+
+        if (!beforeActivity) return prev;
+
+        const index = colActivities.indexOf(beforeActivity);
+        const beforePos =
+          index > 0 ? colActivities[index - 1].position : undefined;
+        const afterPos = beforeActivity.position;
+
+        newPos = calculateFractionalIndex(beforePos, afterPos);
       }
 
-      updateActivityMutation.mutate({
-        movedItem,
-        previousData: prev,
+      // Assign new position
+      dragged.position = newPos;
+
+      // Add back into array
+      filtered.push(dragged);
+
+      updateActivityMutation.mutate(dragged);
+
+      return filtered;
+    });
+
+    setDraggingId(null);
+    setActiveColumn(null);
+
+    indicators.forEach((indicator) => {
+      indicator.style.opacity = '0';
+    });
+  };
+
+  /* --- Mutations --- */
+
+  const updateActivityMutation = useMutation({
+    mutationFn: patchActivity,
+    onMutate: async (updatedActivity: Activity) => {
+      await queryClient.cancelQueries({ queryKey: ['activities', trip.id] });
+
+      const previous = queryClient.getQueryData<Activity[]>([
+        'activities',
+        trip.id,
+      ]);
+
+      // Optimisically update local cache
+      queryClient.setQueryData<Activity[]>(['activities', trip.id], (old) => {
+        if (!old) return old;
+        return old.map((a) =>
+          a.id === updatedActivity.id ? updatedActivity : a,
+        );
       });
 
-      return previousClone;
-    });
-
-    setActiveId(null);
-    setActiveColumnId(null);
-  }
-
-  function handleDeleteActivity(activity: IActivity) {
-    setData((prev) => {
-      const previousClone = structuredClone(prev);
-
-      const column = previousClone[activity.date];
-      if (column) {
-        previousClone[activity.date] = column.filter(
-          (a) => a.id !== activity.id,
-        );
+      return { previous };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(['activities', trip.id], context.previous);
       }
 
-      deleteActivityMutation.mutate(activity);
+      openModal(
+        <>
+          <p>Please try again.</p>
 
-      return previousClone;
-    });
-  }
+          <button onClick={closeModal} className="btn btn--primary mt-8">
+            Okay
+          </button>
+        </>,
+        'There was an error updating the activity.',
+      );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['activities', trip.id] });
+    },
+  });
 
   return (
-    <div className="flex h-dvh overflow-x-auto whitespace-nowrap">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={pointerWithin}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
-        {Object.keys(data).map((date) => (
-          <DayColumn
-            key={date}
-            title={date}
-            activities={data[date]}
-            activeId={activeId}
-            active={activeColumnId === date}
-            onDeleteActivity={handleDeleteActivity}
-          />
-        ))}
-        <DragOverlay>
-          {activeId ? (
-            <Activity activity={findActivity(activeId)} className="shadow-xl" />
-          ) : null}
-        </DragOverlay>
-      </DndContext>
+    <div className="flex h-dvh gap-4 overflow-x-auto p-4 whitespace-nowrap">
+      {days.map((day) => (
+        <div
+          key={day}
+          onDragOver={(e) => handleDragOver(e, day)}
+          onDrop={(e) => handleDragEnd(e, day)}
+          onDragLeave={handleDragLeave}
+          className={`w-64 shrink-0 rounded bg-gray-100 p-2 transition-colors ${
+            activeColumn === day ? 'bg-gray-200' : 'bg-gray-100'
+          }`}
+        >
+          <h3 className="mb-2 font-medium">
+            {new Date(day).toLocaleDateString()}
+          </h3>
+          {localActivities
+            .filter((a) => a.date === day)
+            .sort((a, b) => a.position - b.position)
+            .map((activity) => (
+              <div key={activity.id} className="mb-1">
+                <DropIndicator beforeId={activity.id} column={day} />
+                <ActivityComponent
+                  activity={activity}
+                  onDragStart={() => handleDragStart(activity.id)}
+                />
+              </div>
+            ))}
+          <DropIndicator beforeId={null} column={day} />
+        </div>
+      ))}
     </div>
   );
 }
