@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { createTrip } from '../api/trips';
-import Form from './Form';
 
 interface CreateTripFormProps {
   className?: string;
@@ -74,9 +73,9 @@ export default function CreateTripForm({ className }: CreateTripFormProps) {
     <div className="container my-8 md:my-16 md:max-w-screen-md">
       <h1 className="text-5xl">Create Trip</h1>
 
-      <Form
+      <form
         onSubmit={handleSubmit(onSubmit)}
-        className={`${className || ''} mt-8 grid gap-8`}
+        className={`${className || ''} mt-8 grid gap-8 rounded bg-white p-8 shadow`}
       >
         <div className="grid">
           <label htmlFor="name">Where are you going?</label>
@@ -106,7 +105,7 @@ export default function CreateTripForm({ className }: CreateTripFormProps) {
         <button type="submit" className="btn btn--primary">
           {mutation.isPending ? 'Submitting...' : 'Submit'}
         </button>
-      </Form>
+      </form>
     </div>
   );
 }

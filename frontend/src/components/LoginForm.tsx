@@ -2,7 +2,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useState, type FormEvent } from 'react';
 import { useAuth } from '../context/AuthProvider';
-import FormWrapper from './Form';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -37,7 +36,7 @@ export default function LoginForm() {
   };
 
   return (
-    <FormWrapper className="grid gap-8" onSubmit={handleSubmit}>
+    <form className="grid gap-8" onSubmit={handleSubmit}>
       <input
         type="email"
         placeholder="Email"
@@ -64,6 +63,6 @@ export default function LoginForm() {
       >
         {mutation.isPending ? 'Logging in...' : 'Submit'}
       </button>
-    </FormWrapper>
+    </form>
   );
 }

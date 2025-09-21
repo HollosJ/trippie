@@ -1,14 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { PlusCircleIcon } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Form from './Form';
-import type { Activity } from '../types';
-import { PlusCircleIcon } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createActivity } from '../api/trips';
 import { useModal } from '../context/ModalProvider';
+import type { Activity } from '../types';
 
 type Props = {
   position: number;
@@ -83,7 +82,7 @@ export default function CreateActivityForm({ tripId, position, date }: Props) {
 
   return (
     <motion.div layout>
-      <Form
+      <form
         onSubmit={handleSubmit((formData) => {
           createActivityMutation.mutate({
             ...formData,
@@ -110,7 +109,7 @@ export default function CreateActivityForm({ tripId, position, date }: Props) {
             Add
           </button>
         </div>
-      </Form>
+      </form>
     </motion.div>
   );
 }

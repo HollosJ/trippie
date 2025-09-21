@@ -2,7 +2,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useState, type FormEvent } from 'react';
 import { useAuth } from '../context/AuthProvider';
-import Form from './Form';
 
 interface RegisterFormProps {
   className?: string;
@@ -41,7 +40,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
   };
 
   return (
-    <Form className={`grid gap-8 ${className || ''}`} onSubmit={handleSubmit}>
+    <form className={`grid gap-8 ${className || ''}`} onSubmit={handleSubmit}>
       <div className="grid">
         <label htmlFor="email">Email</label>
         <input
@@ -71,6 +70,6 @@ export function RegisterForm({ className }: RegisterFormProps) {
       >
         {mutation.isPending ? 'Registering...' : 'Register'}
       </button>
-    </Form>
+    </form>
   );
 }
