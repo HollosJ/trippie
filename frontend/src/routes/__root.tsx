@@ -22,9 +22,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => {
     const { pathname } = useLocation();
 
+    const tripPageRegex = /\/trips\/\d+$/;
+
     return (
       <>
-        {!pathname.startsWith('/trips/') && <Nav />}
+        {!tripPageRegex.test(pathname) && <Nav />}
 
         {/* Page contents */}
         <Outlet />
