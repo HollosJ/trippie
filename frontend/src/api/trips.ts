@@ -20,7 +20,7 @@ export async function deleteTrip(tripId: number) {
   });
 }
 
-export async function createActivity(activity: Activity) {
+export async function createActivity(activity: Partial<Activity>) {
   return apiFetch('/activities', {
     method: 'POST',
     body: JSON.stringify(activity),

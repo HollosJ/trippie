@@ -7,6 +7,7 @@ import { apiFetch } from '../utils/api';
 import { calculateFractionalIndex, createDayArray } from '../utils/helpers';
 import ActivityComponent from './Activity';
 import DropIndicator from './DropIndicator';
+import CreateActivityForm from './CreateActivityForm';
 
 interface TripBoardProps {
   trip: Trip;
@@ -17,7 +18,7 @@ export default function TripBoard({ trip }: TripBoardProps) {
   const { openModal, closeModal } = useModal();
 
   const days = createDayArray(trip.startDate, trip.endDate);
-  const { data: activities = [], isPending } = useQuery<Activity[]>({
+  const { data: activities = [] } = useQuery<Activity[]>({
     queryKey: ['activities', trip.id],
     queryFn: () => apiFetch(`/trips/${trip.id}/activities`),
   });
@@ -32,7 +33,7 @@ export default function TripBoard({ trip }: TripBoardProps) {
 
   /* --- Drag & Drop logic --- */
   const getNearestIndicator = (y: number, indicators: HTMLElement[]) => {
-    const DISTANCE_OFFSET = 20;
+    const DISTANCE_OFFSET = 50;
     return indicators.reduce(
       (closest, el) => {
         const rect = el.getBoundingClientRect();
@@ -158,7 +159,6 @@ export default function TripBoard({ trip }: TripBoardProps) {
   };
 
   /* --- Mutations --- */
-
   const updateActivityMutation = useMutation({
     mutationFn: patchActivity,
     onMutate: async (updatedActivity: Activity) => {
@@ -202,24 +202,30 @@ export default function TripBoard({ trip }: TripBoardProps) {
 
   return (
     <div className="flex h-dvh gap-4 overflow-x-auto p-4 whitespace-nowrap">
-      {days.map((day) => (
-        <div
-          key={day}
-          onDragOver={(e) => handleDragOver(e, day)}
-          onDrop={(e) => handleDragEnd(e, day)}
-          onDragLeave={handleDragLeave}
-          className={`w-64 shrink-0 rounded bg-gray-100 p-2 transition-colors ${
-            activeColumn === day ? 'bg-gray-200' : 'bg-gray-100'
-          }`}
-        >
-          <h3 className="mb-2 font-medium">
-            {new Date(day).toLocaleDateString()}
-          </h3>
-          {localActivities
-            .filter((a) => a.date === day)
-            .sort((a, b) => a.position - b.position)
-            .map((activity) => (
-              <div key={activity.id} className="mb-1">
+      {days.map((day) => {
+        const colActivities = localActivities
+          .filter((a) => a.date === day)
+          .sort((a, b) => a.position - b.position);
+
+        const nextPosition = colActivities.length
+          ? colActivities[colActivities.length - 1].position + 1
+          : 0;
+
+        return (
+          <div
+            key={day}
+            onDragOver={(e) => handleDragOver(e, day)}
+            onDrop={(e) => handleDragEnd(e, day)}
+            onDragLeave={handleDragLeave}
+            className={`w-64 shrink-0 rounded bg-gray-100 p-2 transition-colors ${
+              activeColumn === day ? 'bg-gray-200' : 'bg-gray-100'
+            }`}
+          >
+            <h3 className="mb-2 font-medium">
+              {new Date(day).toLocaleDateString()}
+            </h3>
+            {colActivities.map((activity) => (
+              <div key={activity.id}>
                 <DropIndicator beforeId={activity.id} column={day} />
                 <ActivityComponent
                   activity={activity}
@@ -227,9 +233,16 @@ export default function TripBoard({ trip }: TripBoardProps) {
                 />
               </div>
             ))}
-          <DropIndicator beforeId={null} column={day} />
-        </div>
-      ))}
+            <DropIndicator beforeId={null} column={day} />
+
+            <CreateActivityForm
+              position={nextPosition}
+              date={day}
+              tripId={trip.id}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }

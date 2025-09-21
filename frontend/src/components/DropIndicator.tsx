@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+
 type DropIndicatorProps = {
   beforeId: number | null;
   column: string;
@@ -8,10 +10,11 @@ export default function DropIndicator({
   column,
 }: DropIndicatorProps) {
   return (
-    <div
+    <motion.div
+      layout
       data-before={beforeId || '-1'}
       data-column={column}
-      className="relative z-100 my-0.5 h-0.5 w-full rounded-full bg-emerald-400 opacity-0 transition-opacity"
+      className="pointer-events-none relative z-100 h-1 w-full rounded-full bg-emerald-400 opacity-0 transition-opacity"
     />
   );
 }

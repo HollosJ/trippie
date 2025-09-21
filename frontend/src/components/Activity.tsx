@@ -1,3 +1,4 @@
+import { useModal } from '../context/ModalProvider';
 import type { Activity } from '../types';
 import { motion } from 'framer-motion';
 
@@ -15,6 +16,8 @@ export default function Activity({
   className,
   onDragStart,
 }: ActivityProps) {
+  const { openModal, closeModal } = useModal();
+
   if (!activity) return null;
 
   return (
@@ -30,6 +33,18 @@ export default function Activity({
         )
       }
       draggable="true"
+      onClick={() =>
+        openModal(
+          <>
+            <pre>{JSON.stringify(activity, null, 2)}</pre>
+
+            <button onClick={closeModal} className="btn btn--secondary mt-4">
+              Okay
+            </button>
+          </>,
+          'Edit Activity',
+        )
+      }
     >
       <div>{activity.name}</div>
     </motion.div>
