@@ -161,29 +161,12 @@ export default function TripBoard({ trip }: TripBoardProps) {
   /* --- Mutations --- */
   const updateActivityMutation = useMutation({
     mutationFn: patchActivity,
-    onMutate: async (updatedActivity: Activity) => {
-      await queryClient.cancelQueries({ queryKey: ['activities', trip.id] });
-
-      const previous = queryClient.getQueryData<Activity[]>([
-        'activities',
-        trip.id,
-      ]);
-
-      // Optimisically update local cache
-      queryClient.setQueryData<Activity[]>(['activities', trip.id], (old) => {
-        if (!old) return old;
-        return old.map((a) =>
-          a.id === updatedActivity.id ? updatedActivity : a,
-        );
-      });
-
-      return { previous };
+    onMutate: (updated) => {
+      queryClient.setQueryData<Activity[]>(['activities', trip.id], (old) =>
+        old ? old.map((a) => (a.id === updated.id ? updated : a)) : old,
+      );
     },
-    onError: (_err, _variables, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(['activities', trip.id], context.previous);
-      }
-
+    onError: () => {
       openModal(
         <>
           <p>Please try again.</p>
@@ -192,7 +175,7 @@ export default function TripBoard({ trip }: TripBoardProps) {
             Okay
           </button>
         </>,
-        'There was an error updating the activity.',
+        'Error updating activity',
       );
     },
     onSettled: () => {

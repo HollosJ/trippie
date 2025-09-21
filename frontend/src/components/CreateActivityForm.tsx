@@ -46,29 +46,14 @@ export default function CreateActivityForm({ tripId, position, date }: Props) {
 
   const createActivityMutation = useMutation({
     mutationFn: createActivity,
-    onMutate: async (newActivity: Partial<Activity>) => {
-      await queryClient.cancelQueries({ queryKey: ['activities', tripId] });
-
-      const previous = queryClient.getQueryData<Activity[]>([
-        'activities',
-        tripId,
-      ]);
-
+    onMutate: (newActivity: Partial<Activity>) => {
+      // Optimistically update cache
       queryClient.setQueryData<Activity[]>(['activities', tripId], (old) => [
         ...(old || []),
-        {
-          ...(newActivity as Activity),
-          id: Math.random(), // temp ID
-        },
+        { ...(newActivity as Activity), id: Math.random() }, // temp ID
       ]);
-
-      return { previous };
     },
-    onError: (_err, _variables, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(['activities', tripId], context.previous);
-      }
-
+    onError: () => {
       openModal(
         <>
           <p>Please try again.</p>
@@ -109,7 +94,7 @@ export default function CreateActivityForm({ tripId, position, date }: Props) {
         })}
         className="grid"
       >
-        <input id="name" {...register('name')} />
+        <input id="name" {...register('name')} autoFocus />
         {errors.name && <span>{errors.name.message}</span>}
 
         <div className="mt-2 flex justify-end gap-2">
