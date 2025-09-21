@@ -1,6 +1,8 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { deleteActivity } from '../api/trips';
 import { useModal } from '../context/ModalProvider';
 import type { Activity } from '../types';
-import { motion } from 'framer-motion';
 
 interface ActivityProps {
   activity: Activity | undefined;
@@ -16,7 +18,22 @@ export default function Activity({
   className,
   onDragStart,
 }: ActivityProps) {
+  const queryClient = useQueryClient();
   const { openModal, closeModal } = useModal();
+
+  const deleteActivityMutation = useMutation({
+    mutationFn: deleteActivity,
+    onMutate: () => {
+      queryClient.setQueryData<Activity[]>(
+        ['activities', activity?.tripId],
+        (old) => old?.filter((a) => a.id !== activity?.id),
+      );
+    },
+    onError: () => {
+      openModal(<div>Hello</div>);
+    },
+    onSuccess: () => closeModal(),
+  });
 
   if (!activity) return null;
 
@@ -38,8 +55,11 @@ export default function Activity({
           <>
             <pre>{JSON.stringify(activity, null, 2)}</pre>
 
-            <button onClick={closeModal} className="btn btn--secondary mt-4">
-              Okay
+            <button
+              className="btn btn--danger"
+              onClick={() => deleteActivityMutation.mutate(String(activity.id))}
+            >
+              Delete activity
             </button>
           </>,
           'Edit Activity',

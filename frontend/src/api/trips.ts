@@ -34,8 +34,8 @@ export async function patchActivity(activity: Activity) {
   });
 }
 
-export async function deleteActivity(activity: Activity) {
-  return apiFetch(`/activities/${activity.id}`, {
+export async function deleteActivity(activityId: string) {
+  return apiFetch(`/activities/${activityId}`, {
     method: 'DELETE',
   });
 }
