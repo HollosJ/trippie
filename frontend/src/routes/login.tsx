@@ -98,10 +98,10 @@ function LoginComponent() {
         </button>
       </form>
 
-      <p>
+      <p className="mt-4">
         Don't have an account?{' '}
         <Link to="/register" className="underline">
-          Register
+          Register now
         </Link>
       </p>
     </div>

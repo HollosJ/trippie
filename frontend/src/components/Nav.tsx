@@ -8,14 +8,14 @@ export default function Nav() {
   const isLoggedIn = !!user;
 
   return (
-    <nav className="flex items-center justify-between gap-2 border-b bg-white px-2 text-sm">
+    <nav className="text container flex items-center justify-between gap-2 p-4">
       <div className="flex gap-2">
-        <Link to="/" className="[&.active]:font-bold">
+        <Link to="/" className="[&.active]:text-primary">
           Home
         </Link>
 
         {isLoggedIn && (
-          <Link to="/trips" className="[&.active]:font-bold">
+          <Link to="/trips" className="[&.active]:text-primary">
             Trips
           </Link>
         )}

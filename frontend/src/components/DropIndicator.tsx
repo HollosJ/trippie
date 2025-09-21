@@ -14,7 +14,7 @@ export default function DropIndicator({
       layout
       data-before={beforeId || '-1'}
       data-column={column}
-      className="pointer-events-none relative z-100 h-1 w-full rounded-full bg-emerald-400 opacity-0 transition-opacity"
+      className="bg-primary pointer-events-none relative z-100 my-1 h-1 w-full rounded-full opacity-0 transition-opacity"
     />
   );
 }

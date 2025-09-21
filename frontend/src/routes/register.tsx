@@ -12,7 +12,7 @@ function RouteComponent() {
 
       <RegisterForm className="bg-white p-8 shadow" />
 
-      <p>
+      <p className="mt-4">
         Aleady have an account?{' '}
         <Link to="/login" className="underline">
           Login

@@ -77,7 +77,7 @@ export default function TripAside({ trip, handleDelete }: TripAsideProps) {
         <h1
           className={`mt-4 ${isCollapsed ? '[writing-mode:vertical-lr]' : ''}`}
         >
-          <span className="text-3xl text-emerald-400">{trip.name}</span>
+          <span className="text-primary text-3xl">{trip.name}</span>
         </h1>
       </div>
 

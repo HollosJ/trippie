@@ -5,6 +5,7 @@
 /* https://tailwindcss.com/docs/theme */
 @theme {
   /* Your custom theme styles go here (replaces :root) */
+  --color-primary: var(--color-emerald-600);
   --color-black: #040403;
   --color-danger: var(--color-red-600);
   --font-sans: 'Bricolage Grotesque', sans-serif;
@@ -12,6 +13,10 @@
 
 /* Add your own default base styles for specific HTML elements, for example: */
 @layer base {
+  ::selection {
+    @apply bg-primary text-white;
+  }
+
   h1,
   h2,
   h3,
@@ -32,7 +37,7 @@
 
   input,
   textarea {
-    @apply rounded border bg-white p-2;
+    @apply focus:outline-primary rounded border bg-white px-2 py-1;
   }
 }
 
@@ -42,7 +47,7 @@
   }
 
   .btn--primary {
-    @apply bg-black text-white;
+    @apply bg-primary text-white;
   }
 
   .btn--secondary {
