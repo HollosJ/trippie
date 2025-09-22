@@ -9,51 +9,52 @@ export default function Nav() {
 
   const isLoggedIn = !!user;
 
+  const logOutModalContent = () => (
+    <>
+      <p>Are you sure you want to log out?</p>
+
+      <div className="mt-8 flex justify-end gap-2">
+        <button onClick={closeModal} className="btn btn--secondary">
+          Cancel
+        </button>
+
+        <button
+          onClick={() =>
+            logout().then(() => {
+              navigate({
+                to: '/login',
+              });
+              closeModal();
+            })
+          }
+          className="btn btn--danger"
+        >
+          Logout
+        </button>
+      </div>
+    </>
+  );
+
   return (
     <nav className="text container flex items-center justify-between gap-2 p-4">
-      <div className="flex gap-2">
-        <Link to="/" className="[&.active]:text-primary">
-          Home
-        </Link>
+      <Link
+        to="/"
+        className="from-primary bg-gradient-to-r to-emerald-700 bg-clip-text text-3xl font-bold text-transparent"
+      >
+        Trippie
+      </Link>
 
+      <div className="flex gap-4 text-lg">
         {isLoggedIn && (
           <Link to="/trips" className="[&.active]:text-primary">
-            Trips
+            My Trips
           </Link>
         )}
-      </div>
 
-      <div className="flex gap-2">
         {isLoggedIn ? (
           <button
             onClick={() => {
-              openModal(
-                <>
-                  <p>Are you sure you want to log out?</p>
-
-                  <div className="mt-8 flex justify-end gap-2">
-                    <button onClick={closeModal} className="btn btn--secondary">
-                      Cancel
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        logout().then(() => {
-                          navigate({
-                            to: '/login',
-                          });
-                          closeModal();
-                        })
-                      }
-                      className="btn btn--danger"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </>,
-
-                'Logout',
-              );
+              openModal(logOutModalContent(), 'Logout');
             }}
           >
             Logout
