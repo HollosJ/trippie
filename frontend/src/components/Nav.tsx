@@ -9,31 +9,32 @@ export default function Nav() {
 
   const isLoggedIn = !!user;
 
-  const logOutModalContent = () => (
-    <>
-      <p>Are you sure you want to log out?</p>
+  const logOutModalContent = () =>
+    openModal(
+      <>
+        <p>Are you sure you want to log out?</p>
 
-      <div className="mt-8 flex justify-end gap-2">
-        <button onClick={closeModal} className="btn btn--secondary">
-          Cancel
-        </button>
+        <div className="mt-8 flex justify-end gap-2">
+          <button onClick={closeModal} className="btn btn--secondary">
+            Cancel
+          </button>
 
-        <button
-          onClick={() =>
-            logout().then(() => {
-              navigate({
-                to: '/login',
-              });
-              closeModal();
-            })
-          }
-          className="btn btn--danger"
-        >
-          Logout
-        </button>
-      </div>
-    </>
-  );
+          <button
+            onClick={() =>
+              logout().then(() => {
+                navigate({
+                  to: '/login',
+                });
+                closeModal();
+              })
+            }
+            className="btn btn--danger"
+          >
+            Logout
+          </button>
+        </div>
+      </>,
+    );
 
   return (
     <nav className="text container flex items-center justify-between gap-2 p-4">
@@ -52,13 +53,7 @@ export default function Nav() {
         )}
 
         {isLoggedIn ? (
-          <button
-            onClick={() => {
-              openModal(logOutModalContent(), 'Logout');
-            }}
-          >
-            Logout
-          </button>
+          <button onClick={logOutModalContent}>Logout</button>
         ) : (
           <Link to="/login">Login</Link>
         )}

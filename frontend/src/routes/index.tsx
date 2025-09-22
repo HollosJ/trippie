@@ -9,9 +9,9 @@ export const Route = createFileRoute('/')({
 function Index() {
   return (
     <div className="container md:max-w-screen-lg">
-      <div className="my-8 grid items-center md:my-16 md:grid-cols-2">
+      <div className="my-8 grid items-center gap-4 md:my-16 md:grid-cols-2">
         <div>
-          <h1 className="text-5xl font-normal md:text-7xl">
+          <h1 className="text-5xl font-normal text-pretty md:text-7xl">
             The{' '}
             <span className="bg-gradient-to-tr from-emerald-500 to-emerald-700 bg-clip-text font-bold text-transparent">
               ultimate
