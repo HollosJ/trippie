@@ -66,7 +66,9 @@ export default function Activity({
         )
       }
     >
-      <div>{activity.name}</div>
+      <div>
+        <h3 className="font-normal">{activity.name}</h3>
+      </div>
     </motion.div>
   );
 }
