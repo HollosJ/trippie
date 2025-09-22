@@ -200,9 +200,23 @@ export default function TripBoard({ trip }: TripBoardProps) {
               activeColumn === day ? 'bg-gray-200' : 'bg-gray-100'
             }`}
           >
-            <h3 className="mb-2 font-medium">
-              {new Date(day).toLocaleDateString()}
-            </h3>
+            {/* Column header */}
+            <div className="mb-2 flex items-center justify-between text-sm">
+              <h2>
+                {new Date(day).toLocaleDateString('en-GB', {
+                  weekday: 'short',
+                  day: 'numeric',
+                  month: 'short',
+                })}
+              </h2>
+
+              {colActivities.length > 0 && (
+                <span className="text-primary rounded bg-white px-2 shadow">
+                  {colActivities.length}
+                </span>
+              )}
+            </div>
+
             {colActivities.map((activity) => (
               <div key={activity.id}>
                 <DropIndicator beforeId={activity.id} column={day} />
