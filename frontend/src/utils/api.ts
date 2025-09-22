@@ -6,7 +6,7 @@ export async function apiFetch<T>(
   if (!token) throw new Error('No token found');
 
   try {
-    const res = await fetch(`http://localhost:5000/api${endpoint}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api${endpoint}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
