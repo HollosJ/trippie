@@ -184,7 +184,7 @@ export default function TripBoard({ trip }: TripBoardProps) {
   });
 
   return (
-    <div className="flex h-dvh gap-4 overflow-x-auto p-4 whitespace-nowrap">
+    <div className="flex h-dvh overflow-x-auto p-4 whitespace-nowrap">
       {days.map((day) => {
         const colActivities = localActivities
           .filter((a) => a.date === day)
@@ -200,7 +200,7 @@ export default function TripBoard({ trip }: TripBoardProps) {
             onDragOver={(e) => handleDragOver(e, day)}
             onDrop={(e) => handleDragEnd(e, day)}
             onDragLeave={handleDragLeave}
-            className={`w-64 shrink-0 rounded bg-gray-100 p-2 transition-colors ${
+            className={`w-72 shrink-0 rounded bg-gray-100 p-2 transition-colors ${
               activeColumn === day ? 'bg-gray-200' : 'bg-gray-100'
             }`}
           >

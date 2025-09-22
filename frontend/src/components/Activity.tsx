@@ -42,7 +42,7 @@ export default function Activity({
       layout
       layoutId={`activity-${activity.id}`}
       id={`activity-${activity.id}`}
-      className={`relative cursor-grab rounded bg-white p-4 shadow active:cursor-grabbing ${className || ''}`}
+      className={`relative cursor-grab rounded bg-white p-4 whitespace-normal shadow active:cursor-grabbing ${className || ''}`}
       onDragStart={(event) =>
         onDragStart(
           event as unknown as React.DragEvent<HTMLDivElement>,
