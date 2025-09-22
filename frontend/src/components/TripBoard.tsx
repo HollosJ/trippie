@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { patchActivity } from '../api/trips';
 import { useModal } from '../context/ModalProvider';
 import type { Activity, Trip } from '../types';
 import { apiFetch } from '../utils/api';
 import { calculateFractionalIndex, createDayArray } from '../utils/helpers';
 import ActivityComponent from './Activity';
-import DropIndicator from './DropIndicator';
 import CreateActivityForm from './CreateActivityForm';
+import DropIndicator from './DropIndicator';
 
 interface TripBoardProps {
   trip: Trip;
