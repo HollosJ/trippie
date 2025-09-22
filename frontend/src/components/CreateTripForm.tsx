@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { createTrip } from '../api/trips';
+import FormError from './FormError';
 
 interface CreateTripFormProps {
   className?: string;
@@ -80,14 +81,14 @@ export default function CreateTripForm({ className }: CreateTripFormProps) {
         <div className="grid">
           <label htmlFor="name">Where are you going?</label>
           <input id="name" {...register('name')} />
-          {errors.name && <span>{errors.name.message}</span>}
+          <FormError message={errors.name?.message} />
         </div>
 
         <div className="grid grid-cols-2 gap-8">
           <div className="grid">
             <label htmlFor="startDate">From</label>
             <input id="startDate" type="date" {...register('startDate')} />
-            {errors.startDate && <span>{errors.startDate.message}</span>}
+            <FormError message={errors.startDate?.message} />
           </div>
 
           <div className="grid">
@@ -98,7 +99,7 @@ export default function CreateTripForm({ className }: CreateTripFormProps) {
               {...register('endDate')}
               min={startDate}
             />
-            {errors.endDate && <span>{errors.endDate.message}</span>}
+            <FormError message={errors.endDate?.message} />
           </div>
         </div>
 

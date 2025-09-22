@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { createActivity } from '../api/trips';
 import { useModal } from '../context/ModalProvider';
 import type { Activity } from '../types';
+import FormError from './FormError';
 
 type Props = {
   position: number;
@@ -94,7 +95,7 @@ export default function CreateActivityForm({ tripId, position, date }: Props) {
         className="grid"
       >
         <input id="name" {...register('name')} autoFocus />
-        {errors.name && <span>{errors.name.message}</span>}
+        <FormError message={errors.name?.message} />
 
         <div className="mt-2 flex justify-end gap-2">
           <button
