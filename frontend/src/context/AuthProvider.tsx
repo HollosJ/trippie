@@ -67,13 +67,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({ email, password }),
     });
 
+    const data = await response.json();
+
     if (response.ok) {
-      const userData = await response.json();
-      setUser(userData);
+      setUser(data.user);
       setIsAuthenticated(true);
-      localStorage.setItem('auth-token', userData.token);
+      localStorage.setItem('auth-token', data.token);
     } else {
-      throw new Error('Authentication failed');
+      throw new Error(data.error || 'Authentication failed');
     }
   };
 

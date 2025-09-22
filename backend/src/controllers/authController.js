@@ -1,17 +1,18 @@
-import bcrypt from "bcrypt";
-import generateToken from "../utils/generateToken.js";
-import prisma from "../config/db.js";
+import bcrypt from 'bcrypt';
+import prisma from '../config/db.js';
+import generateToken from '../utils/generateToken.js';
 
 export const registerUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) throw new Error("Credentials missing!");
+    if (!email || !password)
+      return res.status(400).json({ error: 'Credentials missing!' });
 
     const userExists = await prisma.user.findUnique({
       where: { email },
     });
     if (userExists)
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ error: 'User already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -24,21 +25,22 @@ export const registerUser = async (req, res) => {
       token: generateToken(user.id),
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message || 'Something went wrong' });
   }
 };
 
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) throw new Error("Credentials missing!");
+    if (!email || !password)
+      return res.status(400).json({ error: 'Credentials missing!' });
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(400).json({ error: "Invalid credentials" });
+    if (!user) return res.status(400).json({ error: 'Invalid credentials' });
 
     const isMatch = await bcrypt.compare(password, user.password);
 
-    if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+    if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
 
     res.json({
       token: generateToken(user.id),
@@ -57,7 +59,7 @@ export const getMe = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     res.json({
@@ -68,6 +70,6 @@ export const getMe = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: 'Server error' });
   }
 };
