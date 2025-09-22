@@ -22,14 +22,9 @@ export default function TripBoard({ trip }: TripBoardProps) {
     queryKey: ['activities', trip.id],
     queryFn: () => apiFetch(`/trips/${trip.id}/activities`),
   });
-  const [localActivities, setLocalActivities] =
-    useState<Activity[]>(activities);
+
   const [draggingId, setDraggingId] = useState<number | null>(null);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
-
-  useEffect(() => {
-    setLocalActivities(activities);
-  }, [activities]);
 
   /* --- Drag & Drop logic --- */
   const getNearestIndicator = (y: number, indicators: HTMLElement[]) => {
@@ -100,7 +95,8 @@ export default function TripBoard({ trip }: TripBoardProps) {
     const nearest = getNearestIndicator(event.clientY, indicators);
     const beforeId = nearest?.dataset.before;
 
-    setLocalActivities((prev) => {
+    queryClient.setQueryData<Activity[]>(['activities', trip.id], (prev) => {
+      if (!prev) return prev;
       const copy = [...prev];
       const dragged = copy.find((a) => a.id === draggingId);
 
@@ -186,7 +182,7 @@ export default function TripBoard({ trip }: TripBoardProps) {
   return (
     <div className="flex h-dvh overflow-x-auto p-4 whitespace-nowrap">
       {days.map((day) => {
-        const colActivities = localActivities
+        const colActivities = activities
           .filter((a) => a.date === day)
           .sort((a, b) => a.position - b.position);
 
