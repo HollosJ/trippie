@@ -17,6 +17,10 @@
     @apply bg-primary text-white;
   }
 
+  body {
+    @apply text-black;
+  }
+
   h1,
   h2,
   h3,
