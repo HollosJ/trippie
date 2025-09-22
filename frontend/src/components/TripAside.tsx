@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
-import type { Trip } from '../types';
+import { Link } from '@tanstack/react-router';
 import {
+  CalendarIcon,
   PanelLeftClose,
   PanelRightClose,
   SquareArrowLeft,
   Trash,
 } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { useModal } from '../context/ModalProvider';
+import type { Trip } from '../types';
 
 interface TripAsideProps {
   trip: Trip;
-
   handleDelete: () => void;
 }
 
@@ -41,6 +41,11 @@ export default function TripAside({ trip, handleDelete }: TripAsideProps) {
       JSON.stringify({ sidebarCollapsed: isCollapsed }),
     );
   }, [isCollapsed]);
+
+  const daysUntilTrip = Math.ceil(
+    (new Date(trip.startDate).getTime() - new Date().getTime()) /
+      (1000 * 60 * 60 * 24),
+  );
 
   return (
     <aside
@@ -79,6 +84,13 @@ export default function TripAside({ trip, handleDelete }: TripAsideProps) {
         >
           <span className="text-primary text-3xl">{trip.name}</span>
         </h1>
+
+        {!isCollapsed && daysUntilTrip > 0 && (
+          <span className="flex items-center text-gray-400">
+            <CalendarIcon className="mr-2 size-4" />
+            In {daysUntilTrip} day{daysUntilTrip > 1 ? 's' : ''}
+          </span>
+        )}
       </div>
 
       {!isCollapsed && (
