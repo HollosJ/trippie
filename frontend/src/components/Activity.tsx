@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useModal } from '../context/ModalProvider';
 import type { Activity } from '../types';
 import EditActivityForm from './EditActivityForm';
+import { MapPin } from 'lucide-react';
 
 interface ActivityProps {
   activity: Activity | undefined;
@@ -50,7 +51,19 @@ export default function Activity({
       }
     >
       <div>
+        {activity.location && (
+          <p className="flex text-sm text-gray-400">
+            <MapPin className="mr-1 size-4" />
+
+            {activity.location}
+          </p>
+        )}
+
         <h3 className="font-normal">{activity.name}</h3>
+
+        {activity.description && (
+          <p className="text-sm text-gray-500">{activity.description}</p>
+        )}
       </div>
     </motion.div>
   );
