@@ -1,13 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../context/AuthProvider';
-import FormError from './FormError';
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import ErrorMessage from './ErrorMessage';
+import FormError from './FormError';
 
 const registerSchema = z.object({
   email: z.email(),
