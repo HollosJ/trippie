@@ -13,6 +13,14 @@ interface ActivityProps {
   ) => void;
 }
 
+export function ActivitySkeleton({ className }: { className?: string }) {
+  return (
+    <motion.div
+      className={`${className || ''} h-16 animate-pulse rounded bg-gray-200 shadow`}
+    ></motion.div>
+  );
+}
+
 export default function Activity({
   activity,
   className,

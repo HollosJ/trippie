@@ -5,7 +5,7 @@ import { useModal } from '../context/ModalProvider';
 import type { Activity, Trip } from '../types';
 import { apiFetch } from '../utils/api';
 import { calculateFractionalIndex, createDayArray } from '../utils/helpers';
-import ActivityComponent from './Activity';
+import ActivityComponent, { ActivitySkeleton } from './Activity';
 import CreateActivityForm from './CreateActivityForm';
 import DropIndicator from './DropIndicator';
 
@@ -18,7 +18,9 @@ export default function TripBoard({ trip }: TripBoardProps) {
   const { openModal, closeModal } = useModal();
 
   const days = createDayArray(trip.startDate, trip.endDate);
-  const { data: activities = [] } = useQuery<Activity[]>({
+  const { data: activities = [], isPending: isFetchingActivities } = useQuery<
+    Activity[]
+  >({
     queryKey: ['activities', trip.id],
     queryFn: () => apiFetch(`/trips/${trip.id}/activities`),
   });
@@ -226,13 +228,27 @@ export default function TripBoard({ trip }: TripBoardProps) {
                 />
               </div>
             ))}
+
+            {/* Skeleton loader */}
+            {isFetchingActivities && (
+              <>
+                <ActivitySkeleton />
+                <ActivitySkeleton className="mt-4" />
+                <ActivitySkeleton className="mt-4" />
+                <ActivitySkeleton className="mt-4" />
+                <ActivitySkeleton className="mt-4" />
+              </>
+            )}
+
             <DropIndicator beforeId={null} column={day} />
 
-            <CreateActivityForm
-              position={nextPosition}
-              date={day}
-              tripId={trip.id}
-            />
+            {!isFetchingActivities && (
+              <CreateActivityForm
+                position={nextPosition}
+                date={day}
+                tripId={trip.id}
+              />
+            )}
           </div>
         );
       })}
