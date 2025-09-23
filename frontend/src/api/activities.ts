@@ -1,6 +1,10 @@
 import type { Activity } from '../types';
 import { apiFetch } from '../utils/api';
 
+export async function fetchTripActivities(tripId: number): Promise<Activity[]> {
+  return apiFetch(`/trips/${tripId}/activities`);
+}
+
 export async function createActivity(activity: Partial<Activity>) {
   return apiFetch('/activities', {
     method: 'POST',

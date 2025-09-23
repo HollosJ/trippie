@@ -1,5 +1,10 @@
 import type { CreateTripType } from '../components/CreateTripForm';
+import type { Trip } from '../types';
 import { apiFetch } from '../utils/api';
+
+export async function fetchTrip(tripId: number): Promise<Trip> {
+  return apiFetch(`/trips/${tripId}`);
+}
 
 export async function fetchTrips() {
   return apiFetch('/trips');

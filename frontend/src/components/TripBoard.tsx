@@ -1,9 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { patchActivity } from '../api/activities';
+import { fetchTripActivities, patchActivity } from '../api/activities';
 import { useModal } from '../context/ModalProvider';
 import type { Activity, Trip } from '../types';
-import { apiFetch } from '../utils/api';
 import { calculateFractionalIndex, createDayArray } from '../utils/helpers';
 import ActivityComponent, { ActivitySkeleton } from './Activity';
 import CreateActivityForm from './CreateActivityForm';
@@ -21,8 +20,8 @@ export default function TripBoard({ trip }: TripBoardProps) {
   const { data: activities = [], isPending: isFetchingActivities } = useQuery<
     Activity[]
   >({
+    queryFn: () => fetchTripActivities(trip.id),
     queryKey: ['activities', trip.id],
-    queryFn: () => apiFetch(`/trips/${trip.id}/activities`),
   });
 
   const [draggingId, setDraggingId] = useState<number | null>(null);

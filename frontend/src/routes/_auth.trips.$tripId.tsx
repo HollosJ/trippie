@@ -1,11 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { deleteTrip } from '../api/trips';
+import { deleteTrip, fetchTrip } from '../api/trips';
 import LoadingSpinner from '../components/LoadingSpinner';
 import TripAside from '../components/TripAside';
 import TripBoard from '../components/TripBoard';
 import type { Trip } from '../types';
-import { apiFetch } from '../utils/api';
 
 export const Route = createFileRoute('/_auth/trips/$tripId')({
   // /trips/:id
@@ -19,8 +18,7 @@ function TripPage() {
 
   const { data, isPending, error } = useQuery<Trip>({
     queryKey: ['trip', tripId],
-    queryFn: () =>
-      apiFetch(`/trips/${tripId}?activities=true&groupByDate=true`),
+    queryFn: () => fetchTrip(Number(tripId)),
   });
 
   const deleteTripMutation = useMutation({
