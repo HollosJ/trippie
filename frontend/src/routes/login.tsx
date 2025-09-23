@@ -17,11 +17,13 @@ export const Route = createFileRoute('/login')({
 });
 
 function LoginComponent() {
+  const search = Route.useSearch();
+
   return (
     <div className="container my-8 md:my-16 md:max-w-screen-md">
       <h1 className="mb-4 text-2xl">Log In</h1>
 
-      <LoginForm />
+      <LoginForm redirect={search.redirect} />
 
       <p className="mt-4">
         Don't have an account?{' '}

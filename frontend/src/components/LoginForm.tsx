@@ -15,7 +15,11 @@ const loginSchema = z.object({
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function LoginForm() {
+type LoginFormProps = {
+  redirect?: string;
+};
+
+export default function LoginForm({ redirect }: LoginFormProps) {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [responseError, setResponseError] = useState<string>('');
@@ -34,7 +38,7 @@ export default function LoginForm() {
     },
     onSuccess: () => {
       navigate({
-        to: '/trips',
+        to: redirect || '/trips',
       });
     },
     onError: (error) => {
