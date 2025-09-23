@@ -1,27 +1,36 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useState, type FormEvent } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { useAuth } from '../context/AuthProvider';
+import FormError from './FormError';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import ErrorMessage from './ErrorMessage';
 
-interface RegisterFormProps {
-  className?: string;
-}
+const registerSchema = z.object({
+  email: z.email(),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
 
-export function RegisterForm({ className }: RegisterFormProps) {
+export type RegisterFormValues = z.infer<typeof registerSchema>;
+
+export function RegisterForm() {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const [responseError, setResponseError] = useState<string>('');
 
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const {
+    register: registerField,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+  });
 
   const mutation = useMutation({
-    mutationFn: async ({
-      email,
-      password,
-    }: {
-      email: string;
-      password: string;
-    }) => {
+    mutationFn: async ({ email, password }: RegisterFormValues) => {
       await register(email, password);
     },
     onSuccess: () => {
@@ -29,39 +38,29 @@ export function RegisterForm({ className }: RegisterFormProps) {
         to: '/trips',
       });
     },
-    onError: () => {
-      console.error('Error during registration');
+    onError: (error) => {
+      setResponseError(error.message);
     },
   });
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    mutation.mutate({ email, password });
-  };
+  const onSubmit = (data: RegisterFormValues) => mutation.mutate(data);
 
   return (
-    <form className={`grid gap-8 ${className || ''}`} onSubmit={handleSubmit}>
+    <form
+      className={`grid gap-8 rounded bg-white p-4 shadow md:p-8`}
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="grid">
         <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <input type="email" {...registerField('email')} />
+        <FormError message={errors.email?.message} />
       </div>
 
       <div className="grid">
         <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <input type="password" {...registerField('password')} />
+        <FormError message={errors.password?.message} />
       </div>
-
-      {mutation.isError && (
-        <span className="text-danger font-bold">{mutation.error.message}</span>
-      )}
 
       <button
         type="submit"
@@ -70,6 +69,8 @@ export function RegisterForm({ className }: RegisterFormProps) {
       >
         {mutation.isPending ? 'Registering...' : 'Register'}
       </button>
+
+      <ErrorMessage message={responseError} />
     </form>
   );
 }

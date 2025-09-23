@@ -76,7 +76,7 @@ export default function CreateTripForm({ className }: CreateTripFormProps) {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className={`${className || ''} mt-8 grid gap-8 rounded bg-white p-8 shadow`}
+        className={`${className || ''} mt-8 grid gap-8 rounded bg-white p-4 shadow md:p-8`}
       >
         <div className="grid">
           <label htmlFor="name">Where are you going?</label>

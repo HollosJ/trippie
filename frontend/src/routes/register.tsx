@@ -8,9 +8,9 @@ export const Route = createFileRoute('/register')({
 function RouteComponent() {
   return (
     <div className="container my-8 md:my-16 md:max-w-screen-md">
-      <h1 className="mb-8 text-2xl">Register</h1>
+      <h1 className="mb-4 text-2xl">Register</h1>
 
-      <RegisterForm className="bg-white p-8 shadow" />
+      <RegisterForm />
 
       <p className="mt-4">
         Aleady have an account?{' '}

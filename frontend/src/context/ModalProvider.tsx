@@ -50,7 +50,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
                   animate={{ scale: 1 }}
                   exit={{ scale: 0.75 }}
                   transition={{ duration: 0.2 }}
-                  className="relative w-full max-w-md rounded bg-white p-6 shadow-lg"
+                  className="relative w-full max-w-md rounded bg-white p-4 shadow-lg md:p-8"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {modalTitle && (

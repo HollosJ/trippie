@@ -5,6 +5,7 @@ import {
   useEffect,
   type ReactNode,
 } from 'react';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export interface User {
   id: string;
@@ -55,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        Loading...
+        <LoadingSpinner />
       </div>
     );
   }
@@ -91,14 +92,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     );
 
+    const data = await response.json();
+
     if (response.ok) {
-      const userData = await response.json();
-      setUser(userData);
+      setUser(data.user);
       setIsAuthenticated(true);
-      // Store token for persistence
-      localStorage.setItem('auth-token', userData.token);
+      localStorage.setItem('auth-token', data.token);
     } else {
-      throw new Error('Authentication failed');
+      throw new Error(data.error || 'Authentication failed');
     }
   };
 
