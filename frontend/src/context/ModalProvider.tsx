@@ -38,7 +38,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
             {modalContent && (
               <motion.div
                 key="backdrop"
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs"
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
                 onClick={closeModal}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
