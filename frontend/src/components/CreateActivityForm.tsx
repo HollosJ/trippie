@@ -5,7 +5,7 @@ import { PlusCircleIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { createActivity } from '../api/trips';
+import { createActivity } from '../api/activities';
 import { useModal } from '../context/ModalProvider';
 import type { Activity } from '../types';
 import FormError from './FormError';

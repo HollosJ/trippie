@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { patchActivity } from '../api/trips';
+import { patchActivity } from '../api/activities';
 import { useModal } from '../context/ModalProvider';
 import type { Activity, Trip } from '../types';
 import { apiFetch } from '../utils/api';

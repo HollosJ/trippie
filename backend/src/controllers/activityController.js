@@ -13,10 +13,12 @@ export const fetchActivities = async (req, res) => {
       },
     });
 
-    res.status(200).json(activities);
+    return res.status(200).json(activities);
   } catch (error) {
     console.error('Error fetching activities:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res
+      .status(500)
+      .json({ error: 'Something went wrong while fetching activities' });
   }
 };
 
@@ -31,10 +33,12 @@ export const createActivity = async (req, res) => {
         ...req.body,
       },
     });
-    res.status(201).json(activity);
+    return res.status(201).json(activity);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error });
+    return res
+      .status(500)
+      .json({ error: 'Something went wrong while creating the activity' });
   }
 };
 
@@ -51,18 +55,20 @@ export const updateActivity = async (req, res) => {
       where: { id: Number(activityId) },
     });
 
-    if (!activity) return res.status(404).json({ error: 'Activity not found' });
+    if (!activity) {
+      return res.status(404).json({ error: 'Activity not found' });
+    }
 
     const updatedActivity = await prisma.activity.update({
       where: { id: Number(activityId) },
-      data: {
-        ...updates,
-      },
+      data: updates,
     });
-    res.status(200).json(updatedActivity);
+
+    return res.status(200).json(updatedActivity);
   } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
+    return res
+      .status(500)
+      .json({ error: 'Something went wrong while updating the activity' });
   }
 };
 
@@ -71,14 +77,15 @@ export const deleteActivity = async (req, res) => {
   const { activityId } = req.params;
 
   if (!userId) return res.status(401).json({ error: 'Unauthorized' });
-
   try {
     await prisma.activity.delete({
       where: { id: Number(activityId) },
     });
-    res.status(200).json({ message: 'Activity deleted successfully' });
+
+    return res.status(200).json({ message: 'Activity deleted successfully' });
   } catch (error) {
-    console.error('Error deleting activity:', error);
-    res.status(500).json({ error });
+    return res
+      .status(500)
+      .json({ error: 'Something went wrong while deleting the activity' });
   }
 };

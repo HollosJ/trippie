@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { deleteActivity } from '../api/trips';
+import { deleteActivity } from '../api/activities';
 import { useModal } from '../context/ModalProvider';
 import type { Activity } from '../types';
+import EditActivityForm from './EditActivityForm';
 
 interface ActivityProps {
   activity: Activity | undefined;
@@ -38,9 +39,17 @@ export default function Activity({
       );
     },
     onError: () => {
-      openModal(<div>Hello</div>);
+      openModal(
+        <div>
+          <p>Please try again.</p>
+
+          <button onClick={closeModal} className="btn btn--primary mt-8">
+            Okay
+          </button>
+        </div>,
+      );
     },
-    onSuccess: () => closeModal(),
+    onSuccess: closeModal,
   });
 
   if (!activity) return null;
@@ -60,16 +69,7 @@ export default function Activity({
       draggable="true"
       onClick={() =>
         openModal(
-          <>
-            <pre>{JSON.stringify(activity, null, 2)}</pre>
-
-            <button
-              className="btn btn--danger"
-              onClick={() => deleteActivityMutation.mutate(String(activity.id))}
-            >
-              Delete activity
-            </button>
-          </>,
+          <EditActivityForm activity={activity} onSuccess={closeModal} />,
           'Edit Activity',
         )
       }

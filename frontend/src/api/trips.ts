@@ -1,6 +1,9 @@
 import type { CreateTripType } from '../components/CreateTripForm';
-import type { Activity } from '../types';
 import { apiFetch } from '../utils/api';
+
+export async function fetchTrips() {
+  return apiFetch('/trips');
+}
 
 export async function createTrip(trip: CreateTripType) {
   // Type comes from Zod schema
@@ -16,26 +19,6 @@ export async function createTrip(trip: CreateTripType) {
 
 export async function deleteTrip(tripId: number) {
   return apiFetch(`/trips/${tripId}`, {
-    method: 'DELETE',
-  });
-}
-
-export async function createActivity(activity: Partial<Activity>) {
-  return apiFetch('/activities', {
-    method: 'POST',
-    body: JSON.stringify(activity),
-  });
-}
-
-export async function patchActivity(activity: Activity) {
-  return apiFetch(`/activities/${activity.id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(activity),
-  });
-}
-
-export async function deleteActivity(activityId: string) {
-  return apiFetch(`/activities/${activityId}`, {
     method: 'DELETE',
   });
 }

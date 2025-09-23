@@ -7,7 +7,7 @@
   /* Your custom theme styles go here (replaces :root) */
   --color-primary: var(--color-emerald-600);
   --color-black: #040403;
-  --color-danger: var(--color-red-600);
+  --color-danger: var(--color-red-400);
   --font-sans: 'Bricolage Grotesque', sans-serif;
 }
 
@@ -39,9 +39,13 @@
     cursor: not-allowed;
   }
 
-  input,
-  textarea {
-    @apply focus:outline-primary rounded border bg-white px-2 py-1;
+  form input,
+  form textarea {
+    @apply focus:outline-primary rounded bg-white px-2 py-1 shadow;
+  }
+
+  form label {
+    @apply block text-sm font-medium;
   }
 
   nav a {

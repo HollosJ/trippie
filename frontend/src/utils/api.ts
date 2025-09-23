@@ -14,13 +14,13 @@ export async function apiFetch<T>(
         ...(options.headers || {}),
       },
     });
+    const data = await res.json();
 
     if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(errorText || 'API request failed');
+      throw new Error(data.error || 'API request failed');
     }
 
-    return res.json() as Promise<T>;
+    return data as T;
   } catch (error) {
     console.error('API fetch error:', error);
     throw error;

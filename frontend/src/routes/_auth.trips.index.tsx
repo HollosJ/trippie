@@ -1,13 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import TripsGrid from '../components/TripsGrid';
 import type { Trip } from '../types';
-import { apiFetch } from '../utils/api';
+import { fetchTrips } from '../api/trips';
 
 export const Route = createFileRoute('/_auth/trips/')({
   // /trips
-  loader: async () => {
-    return apiFetch('/trips') as Promise<Trip[]>;
-  },
+  loader: fetchTrips,
   component: Trips,
 });
 
