@@ -34,7 +34,7 @@ function TripPage() {
   if (error)
     return (
       <div className="container my-8 text-center md:my-16">
-        <h1 className="text-danger text-3xl">
+        <h1 className="text-danger text-2xl">
           There was an error fetching this trip!
         </h1>
 

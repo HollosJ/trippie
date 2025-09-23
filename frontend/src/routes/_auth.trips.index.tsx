@@ -16,7 +16,7 @@ function Trips() {
 
   return (
     <div className="container my-8 md:my-16 md:max-w-screen-md">
-      <h1 className="text-3xl">My Trips</h1>
+      <h1 className="text-2xl">My Trips</h1>
 
       <TripsGrid trips={trips} className="mt-8" />
 

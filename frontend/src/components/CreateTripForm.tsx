@@ -72,7 +72,7 @@ export default function CreateTripForm({ className }: CreateTripFormProps) {
 
   return (
     <div className="container my-8 md:my-16 md:max-w-screen-md">
-      <h1 className="text-5xl">Create Trip</h1>
+      <h1 className="text-2xl">Create Trip</h1>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
