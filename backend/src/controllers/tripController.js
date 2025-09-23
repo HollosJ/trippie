@@ -9,12 +9,8 @@ export const fetchTrips = async (req, res) => {
     }
 
     const trips = await prisma.trip.findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        startDate: 'asc', // Earliest trips first
-      },
+      where: { userId },
+      orderBy: { startDate: 'asc' },
     });
 
     return res.status(200).json(trips);
@@ -27,26 +23,14 @@ export const fetchTrips = async (req, res) => {
 export const fetchTrip = async (req, res) => {
   const { tripId } = req.params;
   const userId = req.userId;
-  const { activities } = req.query;
-  const includeActivities = activities === 'true';
 
   try {
-    if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     let trip = await prisma.trip.findFirst({
-      where: { id: Number(tripId) },
-      include: {
-        activities: includeActivities
-          ? { orderBy: [{ date: 'asc' }, { position: 'asc' }] }
-          : false,
-      },
+      where: { id: Number(tripId), userId },
     });
 
-    if (!trip) {
-      return res.status(404).json({ error: 'Trip not found' });
-    }
+    if (!trip)
+      return res.status(404).json({ error: 'Trip not found or unauthorized' });
 
     if (trip.userId !== userId) {
       return res.status(401).json({ error: 'Unauthorized' });
@@ -106,11 +90,8 @@ export const deleteTrip = async (req, res) => {
       return res.status(400).json({ error: 'Missing trip ID' });
     }
 
-    const trip = await prisma.trip.findUnique({
-      where: {
-        id: Number(tripId),
-        userId,
-      },
+    const trip = await prisma.trip.findFirst({
+      where: { id: Number(tripId), userId },
     });
 
     if (!trip) {

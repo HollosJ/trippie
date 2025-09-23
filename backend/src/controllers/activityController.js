@@ -7,6 +7,14 @@ export const fetchActivities = async (req, res) => {
   if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
   try {
+    const trip = await prisma.trip.findFirst({
+      where: { id: Number(tripId), userId },
+    });
+    if (!trip)
+      return res
+        .status(404)
+        .json({ error: 'Trip not found or not authorized' });
+
     const activities = await prisma.activity.findMany({
       where: {
         tripId: Number(tripId),
@@ -78,6 +86,14 @@ export const deleteActivity = async (req, res) => {
 
   if (!userId) return res.status(401).json({ error: 'Unauthorized' });
   try {
+    const trip = await prisma.trip.findFirst({
+      where: { activities: { some: { id: Number(activityId) } } },
+    });
+    if (!trip)
+      return res
+        .status(404)
+        .json({ error: 'Activity not found or not authorized' });
+
     await prisma.activity.delete({
       where: { id: Number(activityId) },
     });
