@@ -13,9 +13,19 @@ interface CreateTripFormProps {
 
 const tripSchema = z
   .object({
-    name: z.string().trim().min(1, 'Trip name is required'),
-    startDate: z.string().min(1, 'Start date is required'),
-    endDate: z.string().min(1, 'End date is required'),
+    name: z
+      .string()
+      .trim()
+      .min(1, 'Trip name is required')
+      .max(20, 'Too long!'),
+    startDate: z
+      .string()
+      .min(1, 'Start date is required')
+      .refine((date) => !isNaN(new Date(date).getTime()), 'Invalid start date'),
+    endDate: z
+      .string()
+      .min(1, 'End date is required')
+      .refine((date) => !isNaN(new Date(date).getTime()), 'Invalid end date'),
   })
   .refine((data) => new Date(data.endDate) >= new Date(data.startDate), {
     path: ['endDate'],
