@@ -32,7 +32,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         <Outlet />
 
         {/* Devtools */}
-        <TanStackRouterDevtools />
+        {/* <TanStackRouterDevtools /> */}
       </>
     );
   },

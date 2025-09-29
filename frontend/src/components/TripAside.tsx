@@ -1,14 +1,14 @@
 import { Link } from '@tanstack/react-router';
 import {
   CalendarIcon,
-  PanelLeftClose,
-  PanelRightClose,
-  SquareArrowLeft,
+  CornerDownLeft,
+  MoreVertical,
   Trash,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useModal } from '../context/ModalProvider';
 import type { Trip } from '../types';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface TripAsideProps {
   trip: Trip;
@@ -29,11 +29,6 @@ export default function TripAside({ trip, handleDelete }: TripAsideProps) {
     }
   });
 
-  const styles = {
-    collapsed: 'w-16 p-2',
-    expanded: 'w-70 p-2',
-  };
-
   // Remember user preferencee
   useEffect(() => {
     localStorage.setItem(
@@ -47,83 +42,86 @@ export default function TripAside({ trip, handleDelete }: TripAsideProps) {
       (1000 * 60 * 60 * 24),
   );
 
+  const deleteTripModal = () =>
+    openModal(
+      <>
+        <p>Are you sure you want to delete this trip?</p>
+
+        <div className="mt-8 flex justify-end gap-2">
+          <button onClick={closeModal} className="btn btn--secondary">
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              handleDelete();
+              closeModal();
+            }}
+            className="btn btn--danger"
+          >
+            Delete
+          </button>
+        </div>
+      </>,
+      'Delete Trip',
+    );
+
   return (
-    <aside
-      className={`${isCollapsed ? styles.collapsed : styles.expanded} relative z-10 flex shrink-0 flex-col content-start bg-slate-950 text-white transition-all`}
-    >
-      <div
-        className={`grid gap-2 ${isCollapsed ? 'grid-cols-1' : 'grid-cols-2'}`}
-      >
-        <Link
-          className="flex flex-1 items-center justify-center gap-2 rounded p-2 transition-colors hover:bg-white/10"
-          to={`/trips`}
-          title="Back to Trips"
-        >
-          <SquareArrowLeft /> {!isCollapsed && 'Back'}
-        </Link>
+    <>
+      {/* Mobile */}
+      <div className="bg-primary fixed bottom-0 w-full p-4 text-white md:hidden">
+        <div className="container flex items-center justify-between gap-4">
+          <Link
+            to="/trips"
+            className="flex flex-col items-center gap-2 text-xs"
+          >
+            <CornerDownLeft className="size-4" />
+            <span>Return</span>
+          </Link>
 
-        <button
-          className="flex flex-1 items-center justify-center gap-2 rounded p-2 transition-colors hover:bg-white/10"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          title={isCollapsed ? 'Expand' : 'Collapse'}
-        >
-          {isCollapsed ? (
-            <PanelRightClose />
-          ) : (
-            <>
-              <PanelLeftClose /> {!isCollapsed && 'Collapse'}
-            </>
-          )}
-        </button>
-      </div>
+          <div className="flex flex-1 flex-col items-center">
+            <h1 className="text-lg">{trip.name}</h1>
 
-      {/* Main content */}
-      <div className="h-full">
-        <h1
-          className={`mt-4 ${isCollapsed ? '[writing-mode:vertical-lr]' : ''}`}
-        >
-          <span className="text-2xl text-emerald-400">{trip.name}</span>
-        </h1>
+            <span className="flex items-center gap-2 text-xs">
+              <CalendarIcon className="size-4" />
+              In {daysUntilTrip} {daysUntilTrip === 1 ? 'day' : 'days'}
+            </span>
+          </div>
 
-        {!isCollapsed && daysUntilTrip > 0 && (
-          <span className="flex items-center text-gray-400">
-            <CalendarIcon className="mr-2 size-4" />
-            In {daysUntilTrip} day{daysUntilTrip > 1 ? 's' : ''}
-          </span>
-        )}
-      </div>
+          <div className="flex flex-col items-center gap-2 text-xs">
+            <MoreVertical
+              className="size-4"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+            />
+            <span>More</span>
+          </div>
 
-      {!isCollapsed && (
-        <button
-          className="btn btn--danger self-end"
-          onClick={() =>
-            openModal(
-              <>
-                <p>This action cannot be undone.</p>
-
-                <div className="mt-4 flex items-center justify-end gap-2">
-                  <button onClick={closeModal} className="btn btn--secondary">
-                    Cancel
-                  </button>
-
+          {/* Context menu */}
+          <AnimatePresence>
+            {!isCollapsed && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className="absolute right-0 bottom-full w-full bg-emerald-800 p-4"
+              >
+                <div className="container flex items-center justify-between gap-4">
                   <button
-                    onClick={() => {
-                      handleDelete();
-                      closeModal();
-                    }}
-                    className="btn btn--danger"
+                    type="button"
+                    onClick={deleteTripModal}
+                    className="flex flex-col items-center gap-2 text-xs"
                   >
-                    Delete
+                    <Trash className="size-4" />
+                    Delete Trip
                   </button>
                 </div>
-              </>,
-              'Are you sure?',
-            )
-          }
-        >
-          <Trash />
-        </button>
-      )}
-    </aside>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Desktop */}
+    </>
   );
 }
