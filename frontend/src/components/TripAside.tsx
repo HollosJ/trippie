@@ -17,28 +17,32 @@ interface TripAsideProps {
   handleDelete: () => void;
 }
 
+const MotionTrash = motion(Trash);
+const MotionArrowLeft = motion(ArrowLeft);
+const MotionLink = motion(Link);
+
 export default function TripAside({ trip, handleDelete }: TripAsideProps) {
   const { openModal, closeModal } = useModal();
-  const [isCollapsed, setIsCollapsed] = useState(() => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isDesktopMenuOpen, setisDesktopMenuOpen] = useState(() => {
     const savedSettings = localStorage.getItem('dashboardSettings');
     if (!savedSettings) return false;
 
     try {
       const parsed = JSON.parse(savedSettings);
-      return parsed.sidebarCollapsed ?? false;
+      return parsed.sidebarOpen ?? false;
     } catch {
       return false;
     }
   });
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   // Remember user preferencee
   useEffect(() => {
     localStorage.setItem(
       'dashboardSettings',
-      JSON.stringify({ sidebarCollapsed: isCollapsed }),
+      JSON.stringify({ sidebarOpen: isDesktopMenuOpen }),
     );
-  }, [isCollapsed]);
+  }, [isDesktopMenuOpen]);
 
   const daysUntilTrip = Math.ceil(
     (new Date(trip.startDate).getTime() - new Date().getTime()) /
@@ -103,7 +107,6 @@ export default function TripAside({ trip, handleDelete }: TripAsideProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.2, ease: 'easeInOut' }}
                 className="absolute right-0 bottom-full w-full bg-emerald-800"
               >
                 <div className="container flex items-center justify-between gap-4 py-4">
@@ -123,53 +126,79 @@ export default function TripAside({ trip, handleDelete }: TripAsideProps) {
       </div>
 
       {/* Desktop */}
-      <aside
-        className={`relative hidden shrink-0 flex-col bg-gray-900 text-white transition-all md:flex ${isCollapsed ? 'w-16' : 'w-72'}`}
+      <motion.aside
+        layout
+        className="relative top-0 hidden h-dvh shrink-0 flex-col bg-white p-2 shadow md:flex"
+        initial={{ width: isDesktopMenuOpen ? 225 : 80 }}
+        animate={{ width: isDesktopMenuOpen ? 225 : 80 }}
+        transition={{ duration: 0.25 }}
       >
         {/* Toggle */}
-        <button
-          className="absolute top-4 -right-3 z-10 flex size-6 items-center justify-center rounded-full bg-gray-800"
-          onClick={() => setIsCollapsed(!isCollapsed)}
+        <motion.button
+          layout
+          className="bg-primary absolute top-4 -right-3 flex size-6 items-center justify-center rounded-full text-white"
+          onClick={() => setisDesktopMenuOpen(!isDesktopMenuOpen)}
         >
           <ChevronRight
-            className={`${isCollapsed ? '' : 'rotate-180'} size-4 transition-transform`}
+            className={`size-4 transition-transform ${isDesktopMenuOpen ? 'rotate-180' : ''}`}
           />
-        </button>
+        </motion.button>
 
-        {/* Content */}
-        <div className={`mt-8 flex flex-1 flex-col p-2 transition-all`}>
-          <Link
-            className="flex items-center justify-center gap-2 rounded bg-gray-800 p-2 hover:brightness-125"
-            to="/trips"
+        {isDesktopMenuOpen && (
+          <motion.div
+            layout
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="mt-8"
           >
-            <ArrowLeft className="size-4" /> {!isCollapsed && 'Back to trips'}
-          </Link>
-
-          <button
-            className="btn btn--danger mt-2 gap-2"
-            onClick={deleteTripModal}
-          >
-            <Trash className="size-4" />
-
-            {!isCollapsed && 'Delete Trip'}
-          </button>
-
-          <h1
-            className={`mt-8 text-sm leading-0 font-normal ${isCollapsed ? '[writing-mode:vertical-lr]' : ''}`}
-          >
-            {!isCollapsed && (
-              <>
-                Your trip to <br />
-              </>
-            )}
-            <span
-              className={`bg-gradient-to-tr from-emerald-500 to-emerald-600 bg-clip-text font-bold hyphens-auto text-transparent ${isCollapsed ? 'text-4xl' : 'text-3xl'}`}
+            Your trip to
+            <h1
+              className={`from-primary bg-gradient-to-r to-emerald-700 bg-clip-text text-3xl hyphens-auto text-transparent`}
             >
               {trip.name}
-            </span>
-          </h1>
-        </div>
-      </aside>
+            </h1>
+          </motion.div>
+        )}
+
+        {/* Content */}
+        <MotionLink
+          layout
+          to="/trips"
+          className="btn btn--secondary mt-auto gap-2"
+        >
+          <MotionArrowLeft className="size-4" />
+
+          {isDesktopMenuOpen && (
+            <motion.span
+              layout
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              Back to trips
+            </motion.span>
+          )}
+        </MotionLink>
+
+        <motion.button
+          className="btn btn--danger mt-2 gap-2"
+          onClick={deleteTripModal}
+        >
+          <MotionTrash className="size-4" />
+
+          {isDesktopMenuOpen && (
+            <motion.span
+              layout
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              Delete Trip
+            </motion.span>
+          )}
+        </motion.button>
+      </motion.aside>
     </>
   );
 }
