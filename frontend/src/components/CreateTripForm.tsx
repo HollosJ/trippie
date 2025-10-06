@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { createTrip } from '../api/trips';
 import FormError from './FormError';
+import EmojiPicker from './EmojiPicker';
 
 interface CreateTripFormProps {
   className?: string;
@@ -14,6 +15,7 @@ interface CreateTripFormProps {
 const tripSchema = z
   .object({
     name: z.string().trim().min(1, 'Trip name is required'),
+    emoji: z.string().nullable().optional(),
     startDate: z.string().min(1, 'Start date is required'),
     endDate: z.string().min(1, 'End date is required'),
   })
@@ -80,8 +82,24 @@ export default function CreateTripForm({ className }: CreateTripFormProps) {
       >
         <div className="grid">
           <label htmlFor="name">Where are you going?</label>
-          <input id="name" {...register('name')} />
+          <input
+            id="name"
+            {...register('name')}
+            data-required
+            autoComplete="off"
+          />
           <FormError message={errors.name?.message} />
+        </div>
+
+        <div className="grid">
+          <label htmlFor="emoji">Icon</label>
+          <EmojiPicker
+            value={watch('emoji') || null}
+            onChange={(emoji) =>
+              setValue('emoji', emoji, { shouldValidate: true })
+            }
+          />
+          <FormError message={errors.emoji?.message} />
         </div>
 
         <div className="grid grid-cols-2 gap-8">
