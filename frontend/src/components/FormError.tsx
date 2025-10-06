@@ -6,7 +6,5 @@ type Props = {
 export default function FormError({ message, className }: Props) {
   if (!message) return null;
 
-  return (
-    <div className={`text-danger text-sm ${className || ''}`}>{message}</div>
-  );
+  return <div className={`text-danger ${className || ''}`}>{message}</div>;
 }
