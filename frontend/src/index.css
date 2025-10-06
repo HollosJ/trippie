@@ -41,11 +41,17 @@
 
   form input,
   form textarea {
-    @apply focus:outline-primary rounded bg-white px-2 py-1 shadow;
+    @apply focus:outline-primary rounded bg-gray-50 px-4 py-2 shadow;
   }
 
   form label {
-    @apply block text-sm font-medium;
+    @apply block text-lg font-medium;
+  }
+
+  form input:has([data-required]) + label::after,
+  form textarea:has([data-required]) + label::after {
+    content: '*';
+    @apply text-danger ml-0.5;
   }
 
   nav a {
