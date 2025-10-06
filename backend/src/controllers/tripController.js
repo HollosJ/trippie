@@ -46,7 +46,7 @@ export const fetchTrip = async (req, res) => {
 
 export const createTrip = async (req, res) => {
   const userId = req.userId;
-  const { name, startDate, endDate } = req.body;
+  const { name, startDate, endDate, emoji } = req.body;
 
   try {
     if (!userId) {
@@ -60,6 +60,7 @@ export const createTrip = async (req, res) => {
     const trip = await prisma.trip.create({
       data: {
         name,
+        emoji,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
         user: {
