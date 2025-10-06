@@ -6,6 +6,7 @@ export interface LoginCredentials {
 export interface Trip {
   id: number;
   name: string;
+  emoji: string | null;
   startDate: string;
   endDate: string;
   userId: number;
@@ -29,4 +30,9 @@ export interface Activity {
   date: string;
   position: number;
   tripId: number;
+}
+
+export interface Emoji {
+  label: string;
+  emoji: string;
 }
