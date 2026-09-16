@@ -15,6 +15,10 @@ export async function apiFetch<T>(
 
   const data = await res.json();
 
+  if (res.status === 401) {
+    window.dispatchEvent(new Event('auth:expired'));
+    throw new Error(data.error || 'Session expired');
+  }
   if (!res.ok) throw new Error(data.error || 'API request failed');
 
   return data as T;

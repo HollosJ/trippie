@@ -29,28 +29,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem('auth-token');
-    if (token) {
-      fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((response) => response.json())
-        .then((userData) => {
-          if (userData) {
-            setUser(userData.user);
-            setIsAuthenticated(true);
-          } else {
-            localStorage.removeItem('auth-token');
-          }
-        })
-        .catch(() => {
-          localStorage.removeItem('auth-token');
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
+    if (!token) {
       setIsLoading(false);
+      return;
     }
+
+    fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          localStorage.removeItem('auth-token');
+          setUser(null);
+          setIsAuthenticated(false);
+          return;
+        }
+        const data = await response.json();
+        setUser(data.user);
+        setIsAuthenticated(true);
+      })
+      .catch(() => {
+        setUser(null);
+        setIsAuthenticated(false);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    const handleExpired = () => {
+      localStorage.removeItem('auth-token');
+      setUser(null);
+      setIsAuthenticated(false);
+    };
+    window.addEventListener('auth:expired', handleExpired);
+    return () => window.removeEventListener('auth:expired', handleExpired);
   }, []);
 
   if (isLoading) {
