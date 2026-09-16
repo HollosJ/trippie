@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { fetchTripActivities, patchActivity } from '../api/activities';
 import { useModal } from '../context/ModalProvider';
 import type { Activity, Trip } from '../types';
@@ -50,28 +50,33 @@ export default function TripBoard({ trip }: TripBoardProps) {
     setDraggingId(activityId);
   };
 
+  const activeIndicatorRef = useRef<HTMLElement | null>(null);
+
   const handleDragOver = (
     event: React.DragEvent<HTMLDivElement>,
     column: string,
   ) => {
     event.preventDefault();
-
-    setActiveColumn(column);
+    setActiveColumn((prev) => (prev === column ? prev : column));
 
     const indicators = Array.from(
       document.querySelectorAll(`[data-column="${column}"]`),
     ) as HTMLElement[];
 
-    // Reset indicator style
-    indicators.forEach((indicator) => {
-      indicator.style.opacity = '0';
-    });
-
     const nearest = getNearestIndicator(event.clientY, indicators);
+
+    // Nothing changed - don't touch the DOM, don't retrigger the transition
+    if (nearest === activeIndicatorRef.current) return;
+
+    if (activeIndicatorRef.current)
+      activeIndicatorRef.current.style.opacity = '0';
     if (nearest) nearest.style.opacity = '1';
+    activeIndicatorRef.current = nearest ?? null;
   };
 
-  const handleDragLeave = () => {
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    if (event.currentTarget.contains(event.relatedTarget as Node)) return;
+
     setActiveColumn(null);
     const indicators = Array.from(
       document.querySelectorAll(`[data-column]`),
